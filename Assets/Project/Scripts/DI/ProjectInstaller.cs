@@ -35,15 +35,24 @@ public class InputServiceFactory : IFactory<InputService>
         var bus = container.Resolve<EventBus>();
 
         InputService service = new(inputAsset);
-        service.Subscribe(new("Player","Move"), Test);
-        service.Subscribe(new("Player","Move"), Test, InputActionType.Canceled);
+
+        service.Subscribe(new("Player", "Move"), MoveHandler, InputActionType.Performed);
+        service.Subscribe(new("Player", "Move"), MoveHandler, InputActionType.Canceled);
+
+        service.Subscribe(new("Player", "Interact"), InteractHandler, InputActionType.Performed);
 
         return service;
 
-        void Test(InputAction.CallbackContext context)
+        void MoveHandler(InputAction.CallbackContext context)
         {
             var value = context.ReadValue<Vector2>();
             bus.RaiseEvent<IGameplay_MovementEventHandler>(h => h.HandleMovement(value));
+        }
+
+        void InteractHandler(InputAction.CallbackContext context)
+        {
+            var value = context.ReadValueAsButton();
+            bus.RaiseEvent<IGameplay_InteractEventHandler>(h => h.HandleInteract(value));
         }
     }
 

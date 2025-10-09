@@ -2,18 +2,31 @@ using GameJamLvl5.Project.Infrastructure.EventBus.Subscribers;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(MovementBehaviour))]
-public class PlayerBehaviour : MonoBehaviour, IGameplay_MovementEventHandler
+[RequireComponent(typeof(MovementBehaviour), typeof(InteractionBehaviour))]
+public class PlayerBehaviour : MonoBehaviour, IGameplay_MovementEventHandler, IGameplay_InteractEventHandler
 {
-
-    private MovementBehaviour movementBehaviour;
+    private MovementBehaviour _movementBehaviour;
+    private InteractionBehaviour _interactBehaviour;
 
     [Inject]
     private EventBus _eventBus;
 
+    public void HandleMovement(Vector2 direction)
+    {
+        _movementBehaviour.Move(direction);
+    }
+
+    public void HandleInteract(bool button)
+    {
+        _interactBehaviour.Interact();
+    }
+
+    #region Unity internal
+
     void Awake()
     {
-        movementBehaviour = GetComponent<MovementBehaviour>();
+        _movementBehaviour = GetComponent<MovementBehaviour>();
+        _interactBehaviour = GetComponent<InteractionBehaviour>();
     }
 
     void OnEnable()
@@ -26,8 +39,5 @@ public class PlayerBehaviour : MonoBehaviour, IGameplay_MovementEventHandler
         _eventBus.Unsubscribe(this);
     }
 
-    public void HandleMovement(Vector2 direction)
-    {
-        movementBehaviour.Move(direction);
-    }
+    #endregion
 }
