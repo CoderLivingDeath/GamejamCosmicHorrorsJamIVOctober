@@ -1,0 +1,51 @@
+using System.Collections.Generic;
+using GameJamLvl5.Project.Infrastructure.EventBus.Subscribers;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Zenject;
+
+[CreateAssetMenu(fileName = "ProjectInstaller", menuName = "Installers/ProjectInstaller")]
+public class ProjectInstaller : ScriptableObjectInstaller<ProjectInstaller>
+{
+    public AudioConfigSO audioConfigSO;
+    public override void InstallBindings()
+    {
+        Container.BindInterfacesAndSelfTo<AudioConfigSO>().FromInstance(audioConfigSO);
+        Container.BindInterfacesAndSelfTo<InputSystem_Actions>().FromMethod((context) => new InputSystem_Actions()).AsSingle().NonLazy();
+
+        Container.BindInterfacesAndSelfTo<EventBus>().AsSingle().NonLazy();
+
+        Container.BindInterfacesAndSelfTo<SceneLoaderService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<InputService>().FromFactory<InputService, InputServiceFactory>().AsCached().NonLazy();
+    }
+}
+
+public class InputServiceFactory : IFactory<InputService>
+{
+    private DiContainer container;
+
+    public InputServiceFactory(DiContainer container)
+    {
+        this.container = container;
+    }
+
+    public InputService Create()
+    {
+        var inputAsset = container.Resolve<InputSystem_Actions>().asset;
+        var bus = container.Resolve<EventBus>();
+
+        InputService service = new(inputAsset);
+        service.Subscribe(new("Player","Move"), Test);
+        service.Subscribe(new("Player","Move"), Test, InputActionType.Canceled);
+
+        return service;
+
+        void Test(InputAction.CallbackContext context)
+        {
+            var value = context.ReadValue<Vector2>();
+            bus.RaiseEvent<IGameplay_MovementEventHandler>(h => h.HandleMovement(value));
+        }
+    }
+
+
+}

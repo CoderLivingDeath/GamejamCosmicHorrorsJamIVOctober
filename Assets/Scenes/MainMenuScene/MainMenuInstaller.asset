@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f9eb4237827c949b4e7df2b9877a6c, type: 3}
+  m_Name: MainMenuInstaller
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuInstaller
+  audioConfigSO: {fileID: 11400000, guid: 8d84d7de453d4b744bfb39af69f0ef35, type: 2}
+  SettingMenuPrefab: {fileID: 3720387876469012314, guid: f4d0be4e205b03f46b2a96f680554ce0, type: 3}
