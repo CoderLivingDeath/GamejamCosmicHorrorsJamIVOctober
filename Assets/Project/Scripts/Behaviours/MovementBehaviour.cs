@@ -50,6 +50,13 @@ public class MovementBehaviour : MonoBehaviour
 
     private Vector3 _velocityVector; // для гравитации
 
+    public void Teleport(Vector3 position)
+    {
+        _characterController.enabled = false;
+        transform.position = position;
+        _characterController.enabled = true;
+    }
+
     private bool CanMove()
     {
         return _characterController.isGrounded;
