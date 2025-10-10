@@ -26,6 +26,25 @@ public class InputService : IDisposable
         subscriber.Enable();
     }
 
+    public void Subscribe(ActionPath path, params (Action<InputAction.CallbackContext> action, InputActionType type)[] actions)
+    {
+        if (actions == null || actions.Length == 0)
+            throw new ArgumentNullException(nameof(actions));
+
+        var actionMap = _asset.FindActionMap(path.Map) ?? throw new ArgumentException($"Action map '{path.Map}' not found.");
+        var inputAction = actionMap.FindAction(path.Action) ?? throw new ArgumentException($"Action '{path.Action}' not found in map '{path.Map}'.");
+
+        foreach (var (action, type) in actions)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            var subscriber = new InputSubscriber(inputAction, action, type);
+            _inputSubscribers.Add(path, subscriber);
+            subscriber.Enable();
+        }
+    }
+
     public void Unsubscribe(ActionPath path)
     {
         _inputSubscribers.Remove(path);

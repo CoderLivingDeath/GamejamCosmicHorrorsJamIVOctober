@@ -1,0 +1,28 @@
+{
+    "Dialogs": {
+        "log1": {
+            "lines": [
+                {
+                    "title": "hero",
+                    "textId": "l1_greeting_1"
+                },
+                {
+                    "title": "npc1",
+                    "textId": "l1_response_1"
+                }
+            ]
+        },
+        "log2": {
+            "lines": [
+                {
+                    "title": "hero",
+                    "textId": "l1_greeting_1"
+                },
+                {
+                    "title": "npc1",
+                    "textId": "l1_response_1"
+                }
+            ]
+        }
+    }
+}

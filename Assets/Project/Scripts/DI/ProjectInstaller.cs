@@ -13,6 +13,9 @@ public class ProjectInstaller : ScriptableObjectInstaller<ProjectInstaller>
         Container.BindInterfacesAndSelfTo<AudioConfigSO>().FromInstance(audioConfigSO);
         Container.BindInterfacesAndSelfTo<InputSystem_Actions>().FromMethod((context) => new InputSystem_Actions()).AsSingle().NonLazy();
 
+        Container.BindInterfacesAndSelfTo<ResourcesLoader>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<ResourcesManager>().AsSingle().NonLazy();
+
         Container.BindInterfacesAndSelfTo<EventBus>().AsSingle().NonLazy();
 
         Container.BindInterfacesAndSelfTo<SceneLoaderService>().AsSingle();
@@ -36,8 +39,9 @@ public class InputServiceFactory : IFactory<InputService>
 
         InputService service = new(inputAsset);
 
-        service.Subscribe(new("Player", "Move"), MoveHandler, InputActionType.Performed);
-        service.Subscribe(new("Player", "Move"), MoveHandler, InputActionType.Canceled);
+        service.Subscribe(new("Player", "Move"),
+            (MoveHandler, InputActionType.Performed),
+            (MoveHandler, InputActionType.Canceled));
 
         service.Subscribe(new("Player", "Interact"), InteractHandler, InputActionType.Performed);
 

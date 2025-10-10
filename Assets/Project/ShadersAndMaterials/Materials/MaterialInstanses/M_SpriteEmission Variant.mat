@@ -49,6 +49,7 @@ Material:
     - _CastShadows: 0
     - _Cull: 2
     - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _GlowIntensity: 2.11
     - _Metallic: 1
     - _QueueControl: 0

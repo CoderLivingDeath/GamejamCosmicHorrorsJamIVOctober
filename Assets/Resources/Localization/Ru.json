@@ -1,0 +1,12 @@
+{
+    "keys": {
+        "Titles": {
+            "hero": "Leonard",
+            "npc1": "Pedro"
+        },
+        "Messages": {
+            "l1_greeting_1": "Greeting for you!",
+            "l1_response_1": "Respone for you!"
+        }
+    }
+}

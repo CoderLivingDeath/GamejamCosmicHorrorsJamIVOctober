@@ -43,6 +43,7 @@ Material:
     - _AmbientOcclusion: 0
     - _BlendModePreserveSpecular: 1
     - _Cull: 0
+    - _DstBlendAlpha: 10
     - _Metallic: 0.069
     - _SrcBlend: 1
     - _ZWrite: 0

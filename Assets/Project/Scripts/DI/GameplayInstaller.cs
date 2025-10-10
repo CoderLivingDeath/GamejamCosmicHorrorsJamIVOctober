@@ -10,5 +10,7 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
         
         Container.BindFactory<MonoAudioSourcePool.Factory.CreateConfiguration, MonoAudioSourcePool, MonoAudioSourcePool.Factory>();
         Container.BindInterfacesAndSelfTo<AudioService>().FromFactory<AudioService, AudioServiceFactory>().AsCached().NonLazy();
+
+        Container.BindInterfacesAndSelfTo<DialoguePopupViewModel>().AsTransient();
     }
 }
