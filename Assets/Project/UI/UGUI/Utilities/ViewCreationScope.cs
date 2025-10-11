@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 public class ViewCreationScope<T> where T : MonoCanvasView

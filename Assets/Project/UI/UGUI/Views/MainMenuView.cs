@@ -40,7 +40,6 @@ public partial class MainMenuView : MonoCanvasView
 
         BindViewModel();
 
-        // Добавляем обработчики нажатия кнопок, вызывающие команды ViewModel
         playBtn.onClick.AddListener(() => _viewModel.PlayCommand.Execute(null));
         settingsBtn.onClick.AddListener(() => _viewModel.SettingsCommand.Execute(null));
         exitBtn.onClick.AddListener(() => _viewModel.ExitCommand.Execute(null));
@@ -57,7 +56,6 @@ public partial class MainMenuView : MonoCanvasView
     {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
-        // Инициализируем UI начальными значениями из ViewModel
         titleText.text = _viewModel.Title;
         playBtnText.text = _viewModel.Play_btn_text;
         settingsBtnText.text = _viewModel.Settings_btn_text;

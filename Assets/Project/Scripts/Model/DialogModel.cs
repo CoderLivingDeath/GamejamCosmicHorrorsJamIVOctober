@@ -5,17 +5,9 @@ using System.Collections.Generic;
 public class LocalizationData
 {
     [JsonProperty("keys")]
-    public KeysContainer Keys { get; set; }
+    public Dictionary<string, string> Keys { get; set; }
 }
 
-public class KeysContainer
-{
-    [JsonProperty("Titles")]
-    public Dictionary<string, string> Titles { get; set; }
-
-    [JsonProperty("Messages")]
-    public Dictionary<string, string> Messages { get; set; }
-}
 
 [Serializable]
 public class DialogsData
@@ -32,6 +24,6 @@ public class DialogLog
 [Serializable]
 public class DialogLine
 {
-    public string title;
+    public string titleId;
     public string textId;
 }
