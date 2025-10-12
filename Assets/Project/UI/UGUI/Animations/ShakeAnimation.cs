@@ -16,7 +16,7 @@ public class ShakeAnimation : ViewAnimation<MonoCanvasView>
 
     public Ease Ease { get; set; } = Ease.Linear;
 
-    public override async UniTask AnimateAsync(CancellationToken token = default)
+    public override async UniTask Run(CancellationToken token = default)
     {
         if (View == null || View.gameObject == null)
             return;

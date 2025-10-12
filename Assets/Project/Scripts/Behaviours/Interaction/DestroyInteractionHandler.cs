@@ -1,5 +1,5 @@
 [InteractableComponent]
-public class DestroyInteractionHandler : InteractableHandlerBehaviourBase
+public class DestroyInteractionHandler : MonoInteractableHandlerBase
 {
     public override void HandleInteract(InteractionContext context)
     {

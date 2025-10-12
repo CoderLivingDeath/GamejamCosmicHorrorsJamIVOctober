@@ -16,7 +16,7 @@ public class FadeAnimation : ViewAnimation<MonoCanvasView>
     public float EndAlpha { get; set; } = 1f;
     public Ease Ease { get; set; } = Ease.Linear;
 
-    public override async UniTask AnimateAsync(CancellationToken token = default)
+    public override async UniTask Run(CancellationToken token = default)
     {
         var canvasGroup = View.GetComponent<CanvasGroup>();
         if (canvasGroup == null)

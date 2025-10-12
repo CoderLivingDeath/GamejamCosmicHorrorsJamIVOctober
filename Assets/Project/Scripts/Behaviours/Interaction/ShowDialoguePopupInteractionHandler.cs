@@ -2,7 +2,7 @@ using UnityEngine;
 using Zenject;
 
 [InteractableComponent]
-public class ShowDialoguePopupInteractableionHandler : InteractableHandlerBehaviourBase
+public class ShowDialoguePopupInteractableionHandler : MonoInteractableHandlerBase
 {
     public string DialogId => _dialogId;
 

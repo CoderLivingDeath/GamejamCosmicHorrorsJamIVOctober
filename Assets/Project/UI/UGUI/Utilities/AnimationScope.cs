@@ -16,17 +16,17 @@ public class AnimationScope : IDisposable
     private bool _disposed;
 
     /// <summary>
-    ///    ()  .
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     /// </summary>
     public float DurationSeconds => _animation.Duration;
 
     /// <summary>
-    ///     .
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
     /// </summary>
     public TimeSpan Elapsed => _watch.Elapsed;
 
     /// <summary>
-    ///      Duration.
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Duration.
     /// </summary>
     public TimeSpan Remaining
     {
@@ -54,12 +54,12 @@ public class AnimationScope : IDisposable
         _animation.View.IsAnimating = true;
         try
         {
-            await _animation.AnimateAsync(token);
+            await _animation.Run(token);
             Completed?.Invoke();
         }
         catch (OperationCanceledException)
         {
-            //   
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
         catch (Exception ex)
         {
@@ -82,7 +82,7 @@ public class AnimationScope : IDisposable
         }
         catch (OperationCanceledException)
         {
-            //   
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
     }
 
@@ -98,13 +98,13 @@ public class AnimationScope : IDisposable
             }
             catch (OperationCanceledException)
             {
-                //   
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             }
         }
     }
 
     /// <summary>
-    ///    .
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     /// </summary>
     public async UniTask WaitForRemaining()
     {

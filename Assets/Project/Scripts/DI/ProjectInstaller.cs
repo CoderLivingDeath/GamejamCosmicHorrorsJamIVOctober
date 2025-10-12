@@ -45,7 +45,7 @@ public class InputServiceFactory : IFactory<InputService>
             (MoveHandler, InputActionType.Canceled));
 
         service.Subscribe(new("Player", "Interact"), InteractHandler, InputActionType.Performed);
-        service.Subscribe(new("UI", "Submit"), NextDialogueHandler);
+        service.Subscribe(new("UI", "Submit"), NextDialogueHandler, InputActionType.Performed);
 
         return service;
 
@@ -63,7 +63,6 @@ public class InputServiceFactory : IFactory<InputService>
 
         void NextDialogueHandler(InputAction.CallbackContext context)
         {
-            Debug.Log("1");
             bus.RaiseEvent<IUI_NextDialogueEventHandler>(h => h.HandleNextDialogueEvent());
         }
     }
