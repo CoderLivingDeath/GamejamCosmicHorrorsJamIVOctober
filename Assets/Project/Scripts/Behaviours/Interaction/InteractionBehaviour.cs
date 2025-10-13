@@ -83,9 +83,8 @@ public class InteractionBehaviour : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, Radius);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawWireSphere(transform.position, Radius);
     }
-
     #endregion
 }

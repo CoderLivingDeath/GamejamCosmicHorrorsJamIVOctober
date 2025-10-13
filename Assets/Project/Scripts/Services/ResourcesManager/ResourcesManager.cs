@@ -52,6 +52,39 @@ public class ResourcesManager
         return obj;
     }
 
+    public bool TryLoadJson<T>(string path, out T result) where T : class
+    {
+        result = null;
+        string cacheKey = $"{path}_json_{typeof(T).FullName}";
+
+        if (cache.TryGetValue(cacheKey, out var weakRef))
+        {
+            if (weakRef.TryGetTarget(out var cached) && cached is T cachedTyped)
+            {
+                result = cachedTyped;
+                return true;
+            }
+            else
+            {
+                cache.Remove(cacheKey);
+            }
+        }
+
+        T obj = resourcesLoader.LoadAsJson<T>(path);
+        if (obj != null)
+        {
+            cache[cacheKey] = new WeakReference<object>(obj);
+            result = obj;
+            return true;
+        }
+        else
+        {
+            Debug.LogError($"ResourcesManager: Failed to load JSON of type {typeof(T)} at path {path}");
+            return false;
+        }
+    }
+
+
     public void ClearCache()
     {
         cache.Clear();

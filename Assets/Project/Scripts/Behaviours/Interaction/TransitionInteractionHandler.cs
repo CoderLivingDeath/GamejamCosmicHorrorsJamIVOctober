@@ -1,15 +1,21 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 [InteractableComponent]
-public class TransitionInteractionHandler : InteractableHandlerBehaviourBase
+public class TransitionInteractionHandler : MonoInteractableHandlerBase
 {
-    public Transform TransitionalPosition;
+    public Vector3 StartPoint => transform.position;
+    public Vector3 EndPoint => _endPoint.position;
+
+    [SerializeField]
+    public Transform _endPoint;
 
     public override void HandleInteract(InteractionContext context)
     {
-        if(context.Interactor.TryGetComponent<MovementBehaviour>(out var component))
-        {
-            component.Teleport(TransitionalPosition.position);
-        }
+        var behaiour = context.Interactor.GetComponent<MovementBehaviour>();
+        behaiour.Teleport(StartPoint);
+        behaiour.SnapToGround();
+        behaiour.MovePathAsync(EndPoint, 1f).Forget();
     }
 }

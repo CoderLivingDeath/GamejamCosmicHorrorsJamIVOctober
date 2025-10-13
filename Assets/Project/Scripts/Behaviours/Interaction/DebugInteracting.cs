@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
 {
     [InteractableComponent]
-    public class DebugInteracting : InteractableHandlerBehaviourBase
+    public class DebugInteracting : MonoInteractableHandlerBase
     {
         public override void HandleInteract(InteractionContext context)
         {

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 833e598ea1c523c4da41065dbd81d9c5, type: 3}
+  m_Name: MonoPathAnimationEditorSettings
+  m_EditorClassIdentifier: Assembly-CSharp::MonoPathAnimationEditorSettings
+  boundsColorActive: {r: 0, g: 1, b: 0, a: 0.25}
+  boundsColorInactive: {r: 1, g: 0, b: 0, a: 0.5}
+  boundsColorFirstPointActive: {r: 0, g: 0.5, b: 1, a: 0.4}
+  boundsColorLastPointActive: {r: 1, g: 0.5, b: 0, a: 0.4}
+  boundsColorBad: {r: 1, g: 0.3, b: 0.3, a: 0.6}
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  edgeColor: {r: 0, g: 1, b: 0, a: 1}
+  lineThickness: 2.65
+  labelWidth: 150
+  labelPositionOffset: {x: 0, y: -0.2, z: 0}
+  buttonPositionOffset: {x: 0, y: -0.52, z: 0}

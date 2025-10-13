@@ -1,9 +1,10 @@
+using EditorAttributes;
 using GameJamLvl5.Project.Infrastructure.EventBus.Subscribers;
 using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(MovementBehaviour), typeof(InteractionBehaviour))]
-public class PlayerBehaviour : MonoBehaviour, IGameplay_MovementEventHandler, IGameplay_InteractEventHandler
+public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IGameplay_InteractEventHandler
 {
     private MovementBehaviour _movementBehaviour;
     private InteractionBehaviour _interactBehaviour;
@@ -19,6 +20,12 @@ public class PlayerBehaviour : MonoBehaviour, IGameplay_MovementEventHandler, IG
     public void HandleInteract(bool button)
     {
         _interactBehaviour.Interact();
+    }
+
+    [Button]
+    public void Snap()
+    {
+        this.SnapToSurface();
     }
 
     #region Unity internal

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class InteractableHandlerBehaviourBase : MonoBehaviour
+public abstract class MonoInteractableHandlerBase : MonoBehaviour
 {
     public virtual void HandleInteract(InteractionContext context)
     {

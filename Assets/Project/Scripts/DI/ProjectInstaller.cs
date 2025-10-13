@@ -15,6 +15,7 @@ public class ProjectInstaller : ScriptableObjectInstaller<ProjectInstaller>
 
         Container.BindInterfacesAndSelfTo<ResourcesLoader>().AsSingle().NonLazy();
         Container.BindInterfacesAndSelfTo<ResourcesManager>().AsSingle().NonLazy();
+        Container.BindInterfacesAndSelfTo<LocalizationService>().AsSingle().NonLazy();
 
         Container.BindInterfacesAndSelfTo<EventBus>().AsSingle().NonLazy();
 
@@ -44,6 +45,7 @@ public class InputServiceFactory : IFactory<InputService>
             (MoveHandler, InputActionType.Canceled));
 
         service.Subscribe(new("Player", "Interact"), InteractHandler, InputActionType.Performed);
+        service.Subscribe(new("UI", "Submit"), NextDialogueHandler, InputActionType.Performed);
 
         return service;
 
@@ -57,6 +59,11 @@ public class InputServiceFactory : IFactory<InputService>
         {
             var value = context.ReadValueAsButton();
             bus.RaiseEvent<IGameplay_InteractEventHandler>(h => h.HandleInteract(value));
+        }
+
+        void NextDialogueHandler(InputAction.CallbackContext context)
+        {
+            bus.RaiseEvent<IUI_NextDialogueEventHandler>(h => h.HandleNextDialogueEvent());
         }
     }
 

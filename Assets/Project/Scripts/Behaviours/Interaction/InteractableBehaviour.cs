@@ -28,10 +28,10 @@ public class InteractableBehaviour : InteractableBehaviourBase
     }
 
     /// <summary>
-    /// Находит все типы, унаследованные от MonoBehaviour, отмеченные заданным атрибутом, в указанной сборке.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ MonoBehaviour, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
-    /// <param name="attributeType">Тип атрибута-маркера (typeof(MyAttr)).</param>
-    /// <param name="assembly">Экземпляр сборки для поиска.</param>
+    /// <param name="attributeType">пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (typeof(MyAttr)).</param>
+    /// <param name="assembly">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.</param>
     private IEnumerable<Type> GetBehavioursByAttribute(Type attributeType, Assembly assembly)
     {
         if (assembly == null)
@@ -62,12 +62,12 @@ public class InteractableBehaviour : InteractableBehaviourBase
     }
 
     /// <summary>
-    /// Находит тип MonoBehaviour в сборке по имени и атрибуту.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ MonoBehaviour пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
     /// </summary>
-    /// <param name="name">Имя типа (без namespace).</param>
-    /// <param name="attributeType">Тип атрибута (typeof(MyAttribute)).</param>
-    /// <param name="assembly">Сборка для поиска.</param>
-    /// <returns>Type найденного компонента, либо null если не найден.</returns>
+    /// <param name="name">пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ namespace).</param>
+    /// <param name="attributeType">пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (typeof(MyAttribute)).</param>
+    /// <param name="assembly">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.</param>
+    /// <returns>Type пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ null пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.</returns>
     private Type GetBehaviourByNameAndAttribute(string name, Type attributeType, Assembly assembly)
     {
         if (assembly == null || string.IsNullOrEmpty(name) || attributeType == null)
@@ -130,7 +130,7 @@ public class InteractableBehaviour : InteractableBehaviourBase
 
         if (behaviour == null)
         {
-            Debug.LogWarning($"Компонент с именем {value} не найден.");
+            Debug.LogWarning($"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ {value} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.");
             return;
         }
 
@@ -149,7 +149,7 @@ public class InteractableBehaviour : InteractableBehaviourBase
     {
         if (!CanIneract()) return;
 
-        var interactables = GetComponents<InteractableHandlerBehaviourBase>();
+        var interactables = GetComponents<MonoInteractableHandlerBase>();
 
         InteractionContext context = new(this, sender);
 

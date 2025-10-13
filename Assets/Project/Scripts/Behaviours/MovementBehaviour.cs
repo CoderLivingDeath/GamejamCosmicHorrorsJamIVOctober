@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -79,26 +81,6 @@ public class MovementBehaviour : MonoBehaviour
         OnStateChanged?.Invoke(state);
     }
 
-    #region Coroutines
-
-    private async UniTask DirectionMonitoringTask(CancellationToken token)
-    {
-        await UniTask.WaitForSeconds(1);
-        while (!token.IsCancellationRequested)
-        {
-            if (_inputVector != Vector2.zero)
-            {
-                _velocity = _maxVelocity;
-                _directionVector = CalculateDirectionVector(_inputVector);
-            }
-            else
-            {
-                _velocity = 0;
-            }
-            await UniTask.Yield(PlayerLoopTiming.LastFixedUpdate, token);
-        }
-    }
-
     private Vector3 CalculateDirectionVector(Vector2 input)
     {
         // Преобразуем 2D-ввод в 3D (XZ-плоскость)
@@ -106,25 +88,148 @@ public class MovementBehaviour : MonoBehaviour
         return direction;
     }
 
-    private async UniTask MovementTask(CancellationToken token)
+    private void InternalDirectionCalculation()
     {
-        await UniTask.WaitForSeconds(1);
+        if (_inputVector != Vector2.zero)
+        {
+            _velocity = _maxVelocity;
+            _directionVector = CalculateDirectionVector(_inputVector);
+        }
+        else
+        {
+            _velocity = 0;
+        }
+    }
+
+    private void InternalMove()
+    {
+        if (CanMove())
+        {
+            Vector3 motion = _directionVector * _velocity + _velocityVector;
+            _characterController.Move(motion);
+
+            OnPositionChanged?.Invoke(transform.position);
+        }
+        else
+        {
+            Vector3 motion = new Vector3(0, -0.5f, 0);
+            _characterController.Move(motion);
+
+            OnPositionChanged?.Invoke(transform.position);
+        }
+    }
+
+    public void MoveTo(Vector3 point, float distance)
+    {
+        if (point == Vector3.zero || distance == 0) return;
+
+        Vector3 direction = point - transform.position;
+
+        InternalMoveTo(direction, distance);
+    }
+
+    private void InternalMoveTo(Vector3 direction, float distance)
+    {
+        Vector3 motion = direction.normalized * distance;
+        _characterController.Move(motion);
+
+        OnPositionChanged?.Invoke(transform.position);
+    }
+
+    public async UniTask MovePathAsync(Vector3 point, float duration, CancellationToken token = default)
+    {
+        float elapsed = 0f;
+
+        Vector3 startPosition = transform.position;
+        float totalDistance = Vector3.Distance(startPosition, point);
+
+        _movementCoroutine.Stop();
+        _movementStateMachine.UpdateState(true);
+
+        if (totalDistance < 0.01f)
+        {
+            // Обработка случая, если уже на месте
+            Teleport(point);
+            MoveTo(Vector3.zero, 0);
+            return;
+        }
+
+        while (elapsed < duration && !token.IsCancellationRequested)
+        {
+            elapsed += Time.fixedDeltaTime;
+
+            // Рассчитываем прогресс перемещения
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // Целевая позиция по Lerp от начала к цели
+            Vector3 targetPosition = Vector3.Lerp(startPosition, point, t);
+
+            // Рассчитываем направление и шаг для движения
+            Vector3 direction = targetPosition - transform.position;
+            float distance = direction.magnitude;
+
+            // Вычисляем скорость движения, чтобы дойти ровно за duration
+            float maxStep = totalDistance / duration * Time.fixedDeltaTime;
+
+            // Ограничиваем шаг текущей длиной до цели
+            float step = Mathf.Min(maxStep, distance);
+
+            if (step < 0.001f)
+            {
+                break; // Достигли цели или близко к ней
+            }
+
+            MoveTo(point, step);
+
+            await UniTask.Yield(PlayerLoopTiming.FixedUpdate, token);
+        }
+
+        Teleport(point);
+        MoveTo(Vector3.zero, 0);
+
+        _movementStateMachine.UpdateState(false);
+        _movementCoroutine.Run();
+    }
+
+    public void SnapToGround()
+    {
+        if (_characterController.isGrounded) return;
+
+        Bounds bounds = _characterController.bounds;
+
+        float offsetUp = 0f;
+
+        float maxSnapDistance = 15.0f;
+
+        Vector3 rayStart = bounds.center;
+
+        Vector3 rayDirection = Vector3.down;
+
+        if (Physics.Raycast(rayStart, rayDirection, out RaycastHit hit, maxSnapDistance + offsetUp, 1))
+        {
+            Vector3 targetPosition = transform.position;
+            targetPosition.y = hit.point.y + bounds.extents.y;
+
+            Teleport(targetPosition);
+        }
+    }
+
+    #region Coroutines
+
+    private async UniTask DirectionMonitoringTask(CancellationToken token)
+    {
         while (!token.IsCancellationRequested)
         {
-            if (CanMove())
-            {
-                Vector3 motion = _directionVector * _velocity + _velocityVector;
-                _characterController.Move(motion);
+            InternalDirectionCalculation();
+            await UniTask.Yield(PlayerLoopTiming.LastFixedUpdate, token);
+        }
+    }
 
-                OnPositionChanged?.Invoke(transform.position);
-            }
-            else
-            {
-                Vector3 motion = new Vector3(0, -0.05f, 0);
-                _characterController.Move(motion);
-
-                OnPositionChanged?.Invoke(transform.position);
-            }
+    private async UniTask MovementTask(CancellationToken token)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            InternalMove();
             await UniTask.Yield(_timing, token);
         }
     }

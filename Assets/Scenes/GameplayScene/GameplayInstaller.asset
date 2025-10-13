@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8107d7011717dd546a1c8b381034d65a, type: 3}
   m_Name: GameplayInstaller
   m_EditorClassIdentifier: Assembly-CSharp::GameplayInstaller
+  DialogViewPrefab: {fileID: 1794447507972681480, guid: 1bca79fb6081c3d4bba69454b7a2dec4, type: 3}
