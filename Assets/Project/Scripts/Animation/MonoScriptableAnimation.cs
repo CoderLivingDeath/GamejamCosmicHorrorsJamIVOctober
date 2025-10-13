@@ -10,6 +10,7 @@ public abstract class MonoScriptableAnimation : MonoBehaviour, IScriptableAnimat
     public abstract UniTask Run(CancellationToken token = default);
 }
 
+
 public class ScriptableAnimationWithEvents : IScriptableAnimation
 {
     private readonly IScriptableAnimation _animation;
