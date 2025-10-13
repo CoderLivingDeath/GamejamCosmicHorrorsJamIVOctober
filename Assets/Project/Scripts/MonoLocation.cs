@@ -3,7 +3,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class MonoLocation : MonoBehaviour
 {
-    public string Id = "Default scene name";
+    public string Id = "Default location name";
     public Bounds bounds;
 
     public Vector3[] anchors;

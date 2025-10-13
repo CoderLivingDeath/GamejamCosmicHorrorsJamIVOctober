@@ -9,12 +9,7 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
     public override void InstallBindings()
     {
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
-
-        // Найти все объекты MonoLocation на сцене, включая неактивные, в неотсортированном порядке (быстрее)
-        var locations = Object.FindObjectsByType<MonoLocation>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        // Создать словарь Id -> GameObject
-        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc.gameObject);
+        BindLocationController();
 
         Container.BindFactory<MonoAudioSourcePool.Factory.CreateConfiguration, MonoAudioSourcePool, MonoAudioSourcePool.Factory>();
         Container.BindInterfacesAndSelfTo<AudioService>().FromFactory<AudioService, AudioServiceFactory>().AsCached().NonLazy();
@@ -27,4 +22,27 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
         .FromComponentInNewPrefab(DialogViewPrefab)
         .AsTransient();
     }
+
+    private void BindLocationController()
+    {
+        var locations = Object.FindObjectsByType<MonoLocation>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        // Проверка на дубликаты Id
+        var duplicateIds = locations.GroupBy(loc => loc.Id)
+                                    .Where(g => g.Count() > 1)
+                                    .Select(g => g.Key)
+                                    .ToList();
+
+        if (duplicateIds.Count > 0)
+        {
+            Debug.LogError("Duplicate Location Ids found: " + string.Join(", ", duplicateIds));
+            // Возможно лучше выбрасывать исключение
+            return;
+        }
+
+        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc.gameObject);
+
+        Container.BindInterfacesAndSelfTo<LocationController>().AsSingle().WithArguments(locationsDict).NonLazy();
+    }
+
 }
