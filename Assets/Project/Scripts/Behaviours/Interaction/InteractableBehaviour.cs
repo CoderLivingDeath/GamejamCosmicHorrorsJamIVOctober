@@ -145,7 +145,7 @@ public class InteractableBehaviour : InteractableBehaviourBase
         return _canInteract && this.enabled;
     }
 
-    public override void Interact(InteractionBehaviour sender)
+    public override void Interact(GameObject sender)
     {
         if (!CanIneract()) return;
 
@@ -170,9 +170,9 @@ public class InteractableBehaviour : InteractableBehaviourBase
 public readonly struct InteractionContext
 {
     public readonly InteractableBehaviour Interactable;
-    public readonly InteractionBehaviour Interactor;
+    public readonly GameObject Interactor;
 
-    public InteractionContext(InteractableBehaviour interactable, InteractionBehaviour interactor)
+    public InteractionContext(InteractableBehaviour interactable, GameObject interactor)
     {
         Interactable = interactable;
         Interactor = interactor;
@@ -182,7 +182,7 @@ public readonly struct InteractionContext
 public abstract class InteractableBehaviourBase : MonoBehaviour
 {
 
-    public virtual void Interact(InteractionBehaviour sender)
+    public virtual void Interact(GameObject sender)
     {
 
     }

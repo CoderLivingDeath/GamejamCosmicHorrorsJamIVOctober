@@ -4,11 +4,12 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using DG.Tweening;
 using EditorAttributes;
+using UnityEngine.TextCore.Text;
 
 public class MonoPathAnimation : MonoScriptableAnimation
 {
     public override float Duration { get => _duration; protected set => _duration = value; }
-    
+
     [SerializeField]
     private float _duration = 1f;
 

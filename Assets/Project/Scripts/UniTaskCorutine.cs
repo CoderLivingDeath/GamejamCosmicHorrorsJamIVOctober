@@ -2,7 +2,26 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 
-public class UniTaskCoroutine : IDisposable
+public interface IUniTaskCoroutine
+{
+    bool IsRunning { get; }
+    void Run();
+    UniTask RunAsync();
+    void Stop();
+    UniTask StopAsync();
+}
+
+
+public interface IUniTaskCoroutine1<TArg>
+{
+    bool IsRunning { get; }
+    void Run(TArg arg);
+    UniTask RunAsync(TArg arg);
+    void Stop();
+    UniTask StopAsync();
+}
+
+public class UniTaskCoroutine : IDisposable, IUniTaskCoroutine
 {
     private CancellationTokenSource _cts;
     private Func<CancellationToken, UniTask> _asyncDelegate;
@@ -131,7 +150,7 @@ public class UniTaskCoroutine : IDisposable
     }
 }
 
-public class UniTaskCoroutine<TArg> : IDisposable
+public class UniTaskCoroutine<TArg> : IDisposable, IUniTaskCoroutine1<TArg>
 {
     private CancellationTokenSource _cts;
     private Func<TArg, CancellationToken, UniTask> _asyncDelegate;

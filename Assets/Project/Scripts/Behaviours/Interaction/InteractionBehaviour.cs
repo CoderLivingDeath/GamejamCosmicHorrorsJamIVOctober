@@ -55,7 +55,7 @@ public class InteractionBehaviour : MonoBehaviour
     {
         if (SelectedInteractable != null)
         {
-            SelectedInteractable.Interact(this);
+            SelectedInteractable.Interact(this.gameObject);
         }
     }
 
