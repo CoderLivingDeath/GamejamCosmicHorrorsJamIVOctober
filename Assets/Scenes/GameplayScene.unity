@@ -1726,7 +1726,7 @@ MonoBehaviour:
   OnStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
@@ -1741,7 +1741,7 @@ MonoBehaviour:
   OnEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
@@ -2001,7 +2001,6 @@ GameObject:
   - component: {fileID: 1158198644}
   - component: {fileID: 1158198643}
   - component: {fileID: 1158198642}
-  - component: {fileID: 1158198639}
   - component: {fileID: 1158198638}
   - component: {fileID: 1158198645}
   - component: {fileID: 1158198646}
@@ -2025,25 +2024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerBehaviour
   Collider: {fileID: 1158198645}
---- !u!114 &1158198639
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1158198636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 260b39130af49ab4b824e72b0f6f072c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementBehaviour
-  _blockX: 0
-  _blockY: 1
-  _state: 0
-  _maxVelocity: 0.2
-  _velocity: 0
-  _directionVector: {x: 0, y: 0, z: 0}
-  _timing: 4
+  CharacterController: {fileID: 1158198646}
 --- !u!23 &1158198642
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2150,14 +2131,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1158198636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5631d22a609129045af31fe2a1d1ddc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 7103f09fead64f14397becded5b480f6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractionBehaviour
-  Radius: 5
-  Mask:
+  m_EditorClassIdentifier: Assembly-CSharp::MonoCharacterController
+  inspectorMaxVelocity: 0.2
+  inspectorRadius: 3
+  inspectorMask:
     serializedVersion: 2
     m_Bits: 64
-  _timing: 4
+  unityCharacterController: {fileID: 1158198645}
 --- !u!1 &1264921930
 GameObject:
   m_ObjectHideFlags: 0
@@ -2432,7 +2414,7 @@ MonoBehaviour:
   OnStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
@@ -2447,7 +2429,7 @@ MonoBehaviour:
   OnEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
@@ -3973,7 +3955,7 @@ MonoBehaviour:
   OnStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
@@ -4000,7 +3982,7 @@ MonoBehaviour:
   OnEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1158198639}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MovementBehaviour, Assembly-CSharp
         m_MethodName: set_enabled
         m_Mode: 6
