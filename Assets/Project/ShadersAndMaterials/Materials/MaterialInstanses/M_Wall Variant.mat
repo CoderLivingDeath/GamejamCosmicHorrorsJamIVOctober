@@ -21,14 +21,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Wall Variant
-  m_Shader: {fileID: -6465566751694194690, guid: eb686ba450280714c80a9548df5829f4, type: 3}
-  m_Parent: {fileID: 2100000, guid: fb6b2ce2e9d8d214d99cc10d18ca5955, type: 2}
+  m_Shader: {fileID: -6465566751694194690, guid: d920a2357cb429b4bb9410d2ff61631e, type: 3}
+  m_Parent: {fileID: -876546973899608171, guid: d920a2357cb429b4bb9410d2ff61631e, type: 3}
   m_ModifiedSerializedProperties: 18
   m_ValidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
-  m_LightmapFlags: 2
+  m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
@@ -41,8 +41,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: a50b20806297ba540bf6a9b8e4ad6ec0, type: 3}
+        m_Texture: {fileID: 2800000, guid: d8dae4312e5117f4f84db92223602db0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Triplanar_4b5445fb36b844378fc72c7c01dd9cee_Texture_1_Texture2D:
@@ -60,7 +64,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _BlendSharpness: 4
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
+    - _QueueControl: 0
     - _TileSize: 2
+    - _ZWrite: 0
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
