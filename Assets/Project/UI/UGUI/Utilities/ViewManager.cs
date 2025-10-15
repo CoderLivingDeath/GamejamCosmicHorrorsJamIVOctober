@@ -8,9 +8,12 @@ public class ViewManager
     private Canvas _mainCanvas;
     private MonoCanvasView _focusedView;
 
-    public ViewManager(Canvas mainCanvas)
+    private readonly DiContainer _container;
+
+    public ViewManager(Canvas mainCanvas, DiContainer container)
     {
         _mainCanvas = mainCanvas;
+        _container = container;
     }
 
     public AnimationScope Animate<T>(ViewAnimation<T> animation, CancellationToken token = default) where T : MonoCanvasView
@@ -41,6 +44,22 @@ public class ViewManager
         AttachToParent(view, parent);
 
         return new ViewCreationScope<T>(view);
+    }
+
+    public MonoCanvasView InstantiateViewFromPrefab(GameObject prefab, Transform parent = null)
+    {
+        if (prefab == null)
+            throw new ArgumentNullException(nameof(prefab));
+
+        GameObject instance = _container.InstantiatePrefab(prefab);
+        MonoCanvasView view = instance.GetComponent<MonoCanvasView>();
+
+        if (view == null)
+            throw new InvalidOperationException("Prefab does not contain MonoCanvasView component");
+
+        AttachToParent(view, parent);
+
+        return view;
     }
 
     private void AttachToParent(MonoCanvasView view, Transform parent)
