@@ -15,13 +15,14 @@ public class InteractableBehaviour : InteractableBehaviourBase
 
     [SerializeField]
     private bool _canInteract = true;
-
+#if UNITY_EDITOR
     [SerializeField]
     [SelectionPopup(nameof(strs), callbackName: nameof(OnItemSelected), placeholder: "{select}")]
+
     private string Interaction;
 
     public SelectItem[] strs => GetSelectedItems().ToArray();
-
+#endif
     public Assembly GetAssembly()
     {
         return this.GetType().Assembly;
@@ -153,7 +154,7 @@ public class InteractableBehaviour : InteractableBehaviourBase
 
         InteractionContext context = new(this, sender);
 
-        foreach(var interactable in interactables)
+        foreach (var interactable in interactables)
         {
             interactable.HandleInteract(context);
         }

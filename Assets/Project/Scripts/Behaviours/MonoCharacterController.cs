@@ -29,6 +29,10 @@ public class MonoCharacterController : MonoBehaviour
     public bool CanMove => movementController.CanMove;
     public CharacterController CharacterController => movementController.CharacterController;
 
+    private Vector3 _lastMovementVector = Vector3.zero;
+
+    public Vector3 LastMovementVector => _lastMovementVector;
+
     public Animator Animator => animationController.Animator;
 
     [Header("Movement Settings")]
@@ -121,6 +125,18 @@ public class MonoCharacterController : MonoBehaviour
         interactionController?.Dispose();
     }
 
+    private void UpdateScaleByMovementVector(Vector3 movementVector)
+    {
+        if (movementVector == Vector3.zero)
+            return;
+
+        // В 2D часто отражаем по оси X: если движение влево, scale.x = -1, иначе 1
+        Vector3 scale = transform.localScale;
+        scale.x = movementVector.x < 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
+        transform.localScale = scale;
+    }
+
+
     // Методы управления анимацией
     public ScriptableAnimationScope PlayAnimation(string key)
     {
@@ -132,15 +148,26 @@ public class MonoCharacterController : MonoBehaviour
         return animationController.PlayAnimation(animation);
     }
 
+    // TODO: исправить на более подходящую реализацию поворта
+    // эта реализация может не подходить
     // Методы движения
     public void MoveToDirection(Vector2 direction)
     {
         movementController.MoveToDirection(direction);
+
+        Vector3 movementVector3 = new Vector3(direction.x, 0, direction.y);
+        _lastMovementVector = movementVector3;
+
+        UpdateScaleByMovementVector(_lastMovementVector);
     }
 
     public void MoveFromOffset(Vector3 offset)
     {
         movementController.MoveFromOffset(offset);
+
+        _lastMovementVector = offset.normalized;
+
+        UpdateScaleByMovementVector(_lastMovementVector);
     }
 
     public void Teleport(Vector3 point)

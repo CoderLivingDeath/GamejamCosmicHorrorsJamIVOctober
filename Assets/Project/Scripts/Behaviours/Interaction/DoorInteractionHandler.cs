@@ -9,9 +9,16 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         private bool PathAnimationReverce;
 
         [SerializeField]
+        private string ChackPlayerPrefsKey = "Key_taked";
+        [SerializeField]
         private DoorTransitionAnimation doorTransitionAnimation;
         public override void HandleInteract(InteractionContext context)
         {
+            if (PlayerPrefs.GetInt(ChackPlayerPrefsKey) != 1)
+            {
+                Debug.Log("Key not taked.");
+                return;
+            }
             MonoCharacterController monoCharacterController = context.Interactor.GetComponent<MonoCharacterController>();
 
             doorTransitionAnimation.Animate(monoCharacterController, PathAnimationReverce);
