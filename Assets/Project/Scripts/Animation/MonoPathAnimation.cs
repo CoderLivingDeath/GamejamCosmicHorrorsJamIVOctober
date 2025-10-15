@@ -1,76 +1,90 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using DG.Tweening;
 using EditorAttributes;
-using UnityEngine.TextCore.Text;
+using UnityEngine;
 
-public class MonoPathAnimation : MonoScriptableAnimation
+public class MonoPathAnimation : MonoScriptableAnimation<Transform>
 {
-    public override float Duration { get => _duration; protected set => _duration = value; }
-
-    [SerializeField]
-    private float _duration = 1f;
-
-    public Vector3[] Points;
-
-    public Transform transformToAnimate; // объект, который двигаем
-
     public enum CoordinateSpace
     {
         World,
         LocalToMonoPathAnimation
     }
 
-    public LayerMask BoundsCollisionLayers = ~0; // По умолчанию все слои
+    [SerializeField] private float _duration = 1f;
+    public Vector3[] Points;
+    [SerializeField] private Transform transformToAnimate;
+    public LayerMask BoundsCollisionLayers = ~0;
     public CoordinateSpace coordinateSpace = CoordinateSpace.LocalToMonoPathAnimation;
-
     public PathType pathType = PathType.Linear;
-
     public Ease Ease = Ease.Linear;
 
     [Header("Bounds Support")]
     public bool useBoundsSupport = false;
-
     public Vector3 boundsSize = Vector3.one;
+    public Collider[] boundsOverlapCheckColliders = Array.Empty<Collider>();
 
-    public Collider[] boundsOverlapCheckColliders = new Collider[0];
+    [SerializeField] private bool playReverse = false; // Флаг для обратной анимации
 
-    public override async UniTask Run(CancellationToken token = default)
+    public override float Duration => _duration;
+
+    private Vector3[] GetPathPoints(bool reverse, Transform context)
     {
         if (Points == null || Points.Length == 0)
             throw new InvalidOperationException("Points array is null or empty");
-
-        if (transformToAnimate == null)
-            throw new InvalidOperationException("Transform to animate is null");
 
         Vector3[] pathPoints;
 
         if (coordinateSpace == CoordinateSpace.LocalToMonoPathAnimation)
         {
-            // Преобразуем локальные точки относительно MonoPathAnimation в мировые
             pathPoints = new Vector3[Points.Length];
             for (int i = 0; i < Points.Length; i++)
-            {
-                pathPoints[i] = this.transform.TransformPoint(Points[i]);
-            }
+                pathPoints[i] = this.transform.TransformPoint(Points[i]); // Локальные -> мировые с привязкой к этому объекту
         }
-        else
+        else // World
         {
-            pathPoints = Points;
+            pathPoints = (Vector3[])Points.Clone(); // Точки уже в мировых координатах
         }
 
-        Tween pathTween = transformToAnimate.DOPath(pathPoints, Duration, pathType)
-            .SetOptions(false)
+        if (reverse)
+            Array.Reverse(pathPoints);
+
+        return pathPoints;
+    }
+
+    public async UniTask PlayPath(Transform context, bool reverse, CancellationToken token)
+    {
+        if (context == null)
+            throw new InvalidOperationException("Transform to animate is null");
+
+        Vector3[] pathPoints = GetPathPoints(reverse, context);
+
+        Tween pathTween = context.DOPath(pathPoints, Duration, pathType)
+            .SetOptions(false) // false — путь в мировых координатах
             .SetEase(Ease);
 
         await pathTween.ToUniTask(cancellationToken: token);
     }
 
-    [Button]
-    public void RunAnimationButton()
+    public override async UniTask Run(Transform context, CancellationToken token = default)
     {
-        Run().Forget();
+        await PlayPath(context, playReverse, token);
+    }
+
+    public void SetDuration(float duration)
+    {
+        _duration = Mathf.Max(0f, duration);
+    }
+
+    [Button]
+    public void RunAnimationButton() => Run(transformToAnimate).Forget();
+
+    [Button]
+    public void ToggleReverseAndRun()
+    {
+        playReverse = !playReverse;
+        Run(transformToAnimate).Forget();
     }
 }

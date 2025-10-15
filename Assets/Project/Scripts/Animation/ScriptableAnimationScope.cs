@@ -4,9 +4,14 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-// в будущем возможны оптимизации с использованием ref struct
+// В будущем возможны оптимизации с использованием ref struct
 public class ScriptableAnimationScope : IDisposable
 {
+    public enum Status
+    {
+        NotStarted, Started, Cancelled, Compleated
+    }
+
     public readonly IScriptableAnimation Animation;
     public readonly UniTask Task;
     private readonly Stopwatch _watch;
@@ -16,6 +21,9 @@ public class ScriptableAnimationScope : IDisposable
     public event Action Canceled;
 
     private bool _disposed;
+    private Status _status;
+
+    public Status CurrentStatus => _status;
 
     /// <summary>
     /// Длительность анимации в секундах.
@@ -49,7 +57,8 @@ public class ScriptableAnimationScope : IDisposable
     {
         Animation = animation ?? throw new ArgumentNullException(nameof(animation));
         _cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
-        _watch = Stopwatch.StartNew();
+        _watch = new Stopwatch();
+        _status = Status.NotStarted;
 
         Task = AnimateWithCatchAsync(_cts.Token);
     }
@@ -58,17 +67,27 @@ public class ScriptableAnimationScope : IDisposable
     {
         try
         {
+            _status = Status.Started;
+            _watch.Start();
+
             await Animation.Run(token);
+
+            _status = Status.Compleated;
             Completed?.Invoke();
         }
         catch (OperationCanceledException)
         {
-            // Отмена операции
+            _status = Status.Cancelled;
             Canceled?.Invoke();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw ex;
+            _status = Status.Cancelled;
+            throw;
+        }
+        finally
+        {
+            _watch.Stop();
         }
     }
 
@@ -132,6 +151,6 @@ public class ScriptableAnimationScope : IDisposable
     private void ThrowIfDisposed()
     {
         if (_disposed)
-            throw new ObjectDisposedException(nameof(AnimationScope));
+            throw new ObjectDisposedException(nameof(ScriptableAnimationScope));
     }
 }

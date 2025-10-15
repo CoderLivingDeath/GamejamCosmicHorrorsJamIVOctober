@@ -15,6 +15,11 @@ public abstract class ScriptableAnimation : IScriptableAnimation
 
     public static DelegateAnimation<Context> CreateAnimation<Context>(Action<float, Context> action, Context context, float duration = 1.0f)
     {
-        return new DelegateAnimation<Context>(action, context, duration);
+        return new DelegateAnimation<Context>(action, duration);
+    }
+
+    public static IScriptableAnimation Combine(IScriptableAnimation left, IScriptableAnimation right, bool parallel = false)
+    {
+        return new CombineScriptableAnimation(left, right, parallel);
     }
 }

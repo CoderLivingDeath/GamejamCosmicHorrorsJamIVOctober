@@ -22,7 +22,6 @@ public sealed class MonoScriptableAnimationWithEventsDecorator : MonoScriptableA
             if (_animation == null) throw new NullReferenceException("Animation is null.");
             return _animation.Duration;
         }
-        protected set => throw new NotSupportedException("Duration property is read-only.");
     }
 
     public override async UniTask Run(CancellationToken token = default)

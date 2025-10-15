@@ -6,12 +6,14 @@ public class MovementStateMachine
     public enum State
     {
         Move,
+        Run,
         Idle
     }
 
     public enum Trigger
     {
         Move,
+        Run,
         Idle
     }
 
@@ -37,6 +39,8 @@ public class MovementStateMachine
         _stateMachine.Configure(State.Move)
         .Permit(Trigger.Idle, State.Idle)
         .OnEntry(() => OnStateChanged?.Invoke(State.Move));
+
+        // TODO: обработка run
     }
 
     private void FireTrigger(Trigger trigger)
@@ -49,6 +53,7 @@ public class MovementStateMachine
 
     public void UpdateState(bool isMove)
     {
+        // TODO: обработка run
         if (isMove)
         {
             FireTrigger(Trigger.Move);

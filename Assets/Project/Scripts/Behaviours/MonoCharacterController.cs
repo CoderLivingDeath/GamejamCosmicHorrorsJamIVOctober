@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -28,7 +29,8 @@ public class MonoCharacterController : MonoBehaviour
     public bool CanMove => movementController.CanMove;
     public CharacterController CharacterController => movementController.CharacterController;
 
-#if UNITY_EDITOR
+    public Animator Animator => animationController.Animator;
+
     [Header("Movement Settings")]
     [SerializeField] private float inspectorMaxVelocity;
 
@@ -36,15 +38,16 @@ public class MonoCharacterController : MonoBehaviour
     [SerializeField] private float inspectorRadius;
     [SerializeField] private LayerMask inspectorMask;
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+
     [Space]
     [SerializeField] private CharacterController unityCharacterController;
     [SerializeField] private Dictionary<string, IScriptableAnimation> animationLibrary;
-#endif
-
 
     private void Awake()
     {
-        animationController = new AnimationController(animationLibrary);
+        animationController = new AnimationController(animationLibrary, animator);
         movementController = new MovementController(unityCharacterController);
         interactionController = new InteractionController(transform);
 
@@ -66,8 +69,6 @@ public class MonoCharacterController : MonoBehaviour
             animationLibrary = new Dictionary<string, IScriptableAnimation>();
         }
 
-#if UNITY_EDITOR
-
         // Обновить значения в контроллерах при изменении в инспекторе
         if (movementController != null)
             movementController.MaxVelocity = inspectorMaxVelocity;
@@ -77,14 +78,35 @@ public class MonoCharacterController : MonoBehaviour
             interactionController.Radius = inspectorRadius;
             interactionController.Mask = inspectorMask;
         }
-#endif
-    }
 
+        if (animationController != null)
+        {
+            animationController.ValidateAnimator(animator);
+        }
+    }
 
     private void OnEnable()
     {
         movementController?.Enable();
         interactionController?.Enable();
+
+        MovementStateMachine.OnStateChanged += OnMovementStateMachine_OnStateChanged;
+    }
+
+    private void OnMovementStateMachine_OnStateChanged(MovementStateMachine.State state)
+    {
+        switch (state)
+        {
+            case MovementStateMachine.State.Idle:
+                animationController.FireAnimationTrigger("Idle");
+                break;
+            case MovementStateMachine.State.Run:
+                throw new NotSupportedException();
+                break;
+            case MovementStateMachine.State.Move:
+                animationController.FireAnimationTrigger("Walk");
+                break;
+        }
     }
 
     private void OnDisable()
@@ -99,11 +121,15 @@ public class MonoCharacterController : MonoBehaviour
         interactionController?.Dispose();
     }
 
-
     // Методы управления анимацией
-    public void PlayAnimation(string key)
+    public ScriptableAnimationScope PlayAnimation(string key)
     {
-        animationController.PlayAnimation(key);
+        return animationController.PlayAnimation(key);
+    }
+
+    public ScriptableAnimationScope PlayAnimation(IScriptableAnimation animation)
+    {
+        return animationController.PlayAnimation(animation);
     }
 
     // Методы движения
@@ -132,28 +158,101 @@ public class MonoCharacterController : MonoBehaviour
     {
         interactionController.InteractWith(interactable);
     }
+
+    public void FireAnimationTrigger(string key)
+    {
+        animationController.FireAnimationTrigger(key);
+    }
+
+    public void PlayerAnimationWithAnimatorAndTransform(IScriptableAnimation<(Animator, Transform)> animation, bool @override = false)
+    {
+        // TODO: Изменить или доработать отключение контроллера движения. Вызывает баги!
+        // Он не должен отключаться либо должен обрабатывать другое поведение во время анимации
+        if (animationController.IsAnimating) return;
+
+        movementController.Disable();
+        var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(animation, (this.animator, this.transform));
+        var scope = animationController.PlayAnimation(wrapper, @override);
+        if (scope != null)
+            scope.Completed += () => movementController.Enable();
+    }
 }
 
-// -----------------------------------------------
+public class SciptableAnimationWrapper<TContext> : IScriptableAnimation
+{
+    public IScriptableAnimation<TContext> Animation { get; }
+    public TContext Context { get; }
+    public float Duration => Animation.Duration;
 
+    public SciptableAnimationWrapper(IScriptableAnimation<TContext> animation, TContext context)
+    {
+        Animation = animation ?? throw new ArgumentNullException(nameof(animation));
+        Context = context;
+    }
+
+    public async UniTask Run(CancellationToken token = default)
+    {
+        await Animation.Run(Context, token);
+    }
+}
+
+
+// -----------------------------------------------
+#region  Animation Controller
 public class AnimationController
 {
     private ScriptableAnimationScope _currentScope;
 
     private readonly Dictionary<string, IScriptableAnimation> _animationLibrary;
 
+    private Animator animator;
+
     public bool IsAnimating => _currentScope != null;
 
-    public AnimationController(Dictionary<string, IScriptableAnimation> animationLibrary)
+    public Animator Animator => animator;
+
+    public AnimationController(Dictionary<string, IScriptableAnimation> animationLibrary, Animator animator)
     {
         _animationLibrary = animationLibrary;
+        this.animator = animator;
+
+        ValidateAnimator(animator);
     }
 
-    public ScriptableAnimationScope PlayAnimation(string key)
+    public void ValidateAnimator(Animator animator)
+    {
+        if (animator == null)
+        {
+            Debug.LogWarning("Animator is null.");
+            return;
+        }
+
+        AnimatorControllerParameter[] parameters = animator.parameters;
+
+        string[] requiredTriggers = { "Idle", "Walk", "Run" };
+        foreach (string triggerName in requiredTriggers)
+        {
+            bool triggerFound = false;
+            foreach (var param in parameters)
+            {
+                if (param.type == AnimatorControllerParameterType.Trigger && param.name == triggerName)
+                {
+                    triggerFound = true;
+                    break;
+                }
+            }
+            if (!triggerFound)
+            {
+                Debug.LogWarning($"Animator is missing trigger parameter: '{triggerName}'");
+            }
+        }
+    }
+
+    public ScriptableAnimationScope PlayAnimation(string key, bool @override = false)
     {
         if (_animationLibrary.TryGetValue(key, out var animation))
         {
-            var scope = PlayAnimationAsync(animation);
+            var scope = PlayAnimation(animation, @override);
             return scope;
         }
         else
@@ -163,14 +262,55 @@ public class AnimationController
         }
     }
 
-    public ScriptableAnimationScope PlayAnimationAsync(IScriptableAnimation animation)
+    public ScriptableAnimationScope PlayAnimation(IScriptableAnimation animation, bool @override = false)
     {
-        _currentScope?.Dispose();
+        if (@override)
+        {
+            // При override отменяем текущий скоуп и создаём новый
+            ClearAnimationScope();
 
-        _currentScope = new ScriptableAnimationScope(animation);
+            _currentScope = new ScriptableAnimationScope(animation);
+            _currentScope.Completed += ClearAnimationScope;
+        }
+        else
+        {
+            if (IsAnimating)
+            {
+                Debug.LogWarning("Animation is already running");
+                return null;
+            }
+            _currentScope = new ScriptableAnimationScope(animation);
+            _currentScope.Completed += ClearAnimationScope;
+        }
 
         return _currentScope;
     }
+
+    private void ClearAnimationScope()
+    {
+        _currentScope?.Dispose();
+        _currentScope = null;
+    }
+
+    public void FireAnimationTrigger(string trigger)
+    {
+        if (IsAnimating) return;
+
+        if (animator == null)
+        {
+            Debug.LogWarning("Animator is null. Cannot set trigger.");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(trigger))
+        {
+            Debug.LogWarning("Trigger string is null or empty.");
+            return;
+        }
+
+        animator.SetTrigger(trigger);
+    }
+
 
     public void CancelCurrentAnimation()
     {
@@ -178,6 +318,9 @@ public class AnimationController
     }
 }
 
+#endregion
+
+#region Movement Controller
 public class MovementController : IDisposable
 {
     private float _velocity;
@@ -389,9 +532,9 @@ public class MovementController : IDisposable
         _isMovingMonitoringCoroutine = null;
     }
 }
-
+#endregion
 // ---------------------------------------
-
+#region  Interaction Controller
 public class InteractionController : IDisposable
 {
     public Transform Transform;
@@ -486,3 +629,4 @@ public class InteractionController : IDisposable
         _monitoringCoroutine = null;
     }
 }
+#endregion
