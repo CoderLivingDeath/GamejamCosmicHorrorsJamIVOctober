@@ -28,30 +28,7 @@ public class MonoMonsterAI : MonoCharacter
 
     [SerializeField]
     private MonsterAI.AIState aIState;
-
-    public async UniTask ChaseTask(CancellationToken token)
-    {
-        Transform targetTransform = playerTransform;
-
-        while (!token.IsCancellationRequested)
-        {
-            if (targetTransform == null)
-            {
-                // Цель отсутствует — прерываем задачу
-                break;
-            }
-
-            Vector3 direction = targetTransform.position - transform.position;
-            direction.y = 0; // Игнорируем ось Y для движения по земле
-
-            Vector2 moveDir = new Vector2(direction.x, direction.z).normalized;
-            monoCharacterController.MoveToDirection(moveDir);
-
-            await UniTask.Yield(PlayerLoopTiming.FixedUpdate, token);
-        }
-    }
-
-
+    
     private void Awake()
     {
         monsterAI = new MonsterAI();
