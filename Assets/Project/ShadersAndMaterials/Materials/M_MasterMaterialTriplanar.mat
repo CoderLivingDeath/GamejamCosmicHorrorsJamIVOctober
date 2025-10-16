@@ -88,7 +88,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _Blending: 0.84
+    - _Blending: 0.843
     - _CChangeGrad: 0
     - _CChangeHeight: 0
     - _CChangePenGrad: 0
@@ -98,21 +98,21 @@ Material:
     - _Cull: 2
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _Glossiness: 0.497
-    - _IntBlend: 0.25
+    - _Glossiness: 0.511
+    - _IntBlend: 0.491
     - _IntPosInf: 1
     - _MaxNoise: 0.1793333
-    - _Metallic: 0.5
+    - _Metallic: 0.503
     - _MinNoise: 0.17733333
     - _NoiseBumpStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _SecGlossiness: 0.208
-    - _SecMetallic: 0.606
-    - _SmoothEnd: 0.08966665
+    - _SecGlossiness: 0.453
+    - _SecMetallic: 0.51
+    - _SmoothEnd: 0.089666665
     - _SmoothSmooth: 0
-    - _SmoothStart: 0.08966665
+    - _SmoothStart: 0.089666665
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
@@ -121,12 +121,12 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.1623773, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.16114482, b: 0, a: 1}
     - _Cos: {r: 1, g: 1, b: 1, a: 0}
-    - _IntClampPos: {r: -30.2, g: 1.2, b: 0, a: 0}
-    - _IntClampWidth: {r: 8.2, g: 8.2, b: 8.2, a: 0}
+    - _IntClampPos: {r: 83.3, g: 2, b: 10.16, a: 0}
+    - _IntClampWidth: {r: 43.6, g: 5.2, b: 12.89, a: 0}
     - _IntOffsetFactor: {r: 0, g: 0, b: 0, a: 0}
-    - _IntPosGrad: {r: 18.8, g: 20.6, b: 18.8, a: 0}
+    - _IntPosGrad: {r: 57.699997, g: 57.699997, b: 57.699997, a: 0}
     - _IntScaleFactor: {r: 0.1, g: 0.1, b: 0.1, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _MainOffsetFactor: {r: 0, g: 0, b: 0, a: 0}

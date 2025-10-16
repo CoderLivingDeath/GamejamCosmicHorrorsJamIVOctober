@@ -42,6 +42,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _BumpMapUnder:
+        m_Texture: {fileID: 2800000, guid: 867a8a356f123ca4aa7bb6abfa69ba6e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _InterpNormal:
+        m_Texture: {fileID: 2800000, guid: 03d2dde87eb09224bba05524bd6ed781, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 02b032fbca92deb46a9c50f6403e9b03, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -50,7 +58,8 @@ Material:
     m_Floats:
     - _Glossiness: 0.16
     - _Metallic: 0.65
+    - _SecGlossiness: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.07233157, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.07205028, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
