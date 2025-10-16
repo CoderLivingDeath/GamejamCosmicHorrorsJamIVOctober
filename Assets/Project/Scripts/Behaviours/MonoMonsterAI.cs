@@ -4,6 +4,7 @@ using System.Threading;
 using EditorAttributes;
 using System;
 using Stateless;
+using Zenject;
 
 /// <summary>
 /// Класс управления ИИ монстра, расширяющий MonoCharacter.
@@ -28,7 +29,7 @@ public class MonoMonsterAI : MonoCharacter
 
     [SerializeField]
     private MonsterAI.AIState aIState;
-    
+
     private void Awake()
     {
         monsterAI = new MonsterAI();
@@ -322,5 +323,27 @@ public class MonsterAI
     private void OnChaseEnter()
     {
         // Логика для погони
+    }
+}
+
+public class MonoMonsterAIFactory
+{
+    private readonly DiContainer _container;
+    private readonly GameObject _monsterAIPrefab;
+    
+    public MonoMonsterAIFactory(DiContainer container)
+    {
+        _container = container;
+    }
+
+    public MonoMonsterAI Create(Vector3 position, Transform parent)
+    {
+        // Инстанциируем объект из префаба под нужным родителем и позицией
+        GameObject monsterGO = _container.InstantiatePrefab(_monsterAIPrefab, position, Quaternion.identity, parent);
+        
+        // Получаем компонент MonoMonsterAI
+        MonoMonsterAI monsterAI = monsterGO.GetComponent<MonoMonsterAI>();
+
+        return monsterAI;
     }
 }

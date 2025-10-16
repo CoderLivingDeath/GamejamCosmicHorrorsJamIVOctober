@@ -1,22 +1,18 @@
 {
     "Dialogs": {
-        "log1": {
+        "Sample": {
             "lines": [
                 {
                     "titleId": "hero",
-                    "textId": "l1_greeting_1"
+                    "textId": "sample_1"
                 },
                 {
                     "titleId": "npc1",
-                    "textId": "l1_response_1"
-                }
-            ]
-        },
-        "log2": {
-            "lines": [
+                    "textId": "sample_2"
+                },
                 {
-                    "titleId": "npc1",
-                    "textId": "l1_response_1"
+                    "titleId": "hero",
+                    "textId": "sample_2"
                 }
             ]
         }

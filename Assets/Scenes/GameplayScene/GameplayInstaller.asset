@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: GameplayInstaller
   m_EditorClassIdentifier: Assembly-CSharp::GameplayInstaller
   DialogViewPrefab: {fileID: 1794447507972681480, guid: 1bca79fb6081c3d4bba69454b7a2dec4, type: 3}
+  MonsterPrefab: {fileID: 2378856002128295761, guid: 28085727c2d320646b2f06ea044ca102, type: 3}

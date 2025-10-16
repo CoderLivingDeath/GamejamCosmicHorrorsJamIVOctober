@@ -21,6 +21,7 @@ public class InteractionBehaviour : MonoBehaviour
     [SerializeField]
     private PlayerLoopTiming _timing;
 
+    // TODO: убрать постоянный поиск без необходимости
     private async UniTask InteractableMonitoring(CancellationToken cancellationToken)
     {
         while (!cancellationToken.IsCancellationRequested)
