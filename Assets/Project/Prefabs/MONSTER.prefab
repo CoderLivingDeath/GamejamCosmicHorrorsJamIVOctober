@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 5342424947094728902}
   - component: {fileID: 2331179488624655105}
   - component: {fileID: 2716159486980582105}
+  - component: {fileID: 4722830084896105578}
   m_Layer: 3
   m_Name: MONSTER
   m_TagString: Untagged
@@ -122,6 +123,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4072918624455774723}
+  - {fileID: 8954840635064051210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &2331179488624655105
@@ -162,12 +164,114 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonoCharacterController
   inspectorMaxVelocity: 0.2
+  BlockX: 0
+  BlockY: 1
   inspectorRadius: 3
   inspectorMask:
     serializedVersion: 2
     m_Bits: 64
   animator: {fileID: 4882973878604622102}
   unityCharacterController: {fileID: 2331179488624655105}
+--- !u!114 &4722830084896105578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378856002128295761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17882d84e11233540b32e2bd1d879a83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonoMonsterAI
+  Collider: {fileID: 2331179488624655105}
+  monoCharacterController: {fileID: 2716159486980582105}
+  AIVision: {fileID: 4324332048231648057}
+  aIState: 0
+--- !u!1 &5738246437204902103
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8954840635064051210}
+  - component: {fileID: 4324332048231648057}
+  - component: {fileID: 8816349377883686907}
+  - component: {fileID: 8084255792537297011}
+  m_Layer: 0
+  m_Name: Vision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8954840635064051210
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738246437204902103}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5342424947094728902}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+--- !u!114 &4324332048231648057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738246437204902103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 288c38f28533985439a8049845d2bb5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterVisionTrigger
+--- !u!114 &8816349377883686907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738246437204902103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73debc1163692042a6b2ea45a9d7622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrapezoidVisualizer
+  bottomWidth: 2
+  topWidth: 2
+  depth: 2.74
+  height: 6.56
+--- !u!64 &8084255792537297011
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5738246437204902103}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &7996593342902782890
 GameObject:
   m_ObjectHideFlags: 0

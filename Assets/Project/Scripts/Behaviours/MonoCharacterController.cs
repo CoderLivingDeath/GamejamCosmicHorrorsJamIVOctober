@@ -37,6 +37,8 @@ public class MonoCharacterController : MonoBehaviour
 
     [Header("Movement Settings")]
     [SerializeField] private float inspectorMaxVelocity;
+    [SerializeField] private bool BlockX;
+    [SerializeField] private bool BlockY;
 
     [Header("Interaction Settings")]
     [SerializeField] private float inspectorRadius;
@@ -153,6 +155,9 @@ public class MonoCharacterController : MonoBehaviour
     // Методы движения
     public void MoveToDirection(Vector2 direction)
     {
+        if (BlockX) direction.x = 0;
+        if (BlockY) direction.y = 0;
+
         movementController.MoveToDirection(direction);
 
         Vector3 movementVector3 = new Vector3(direction.x, 0, direction.y);
