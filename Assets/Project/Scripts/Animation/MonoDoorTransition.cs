@@ -6,15 +6,19 @@ using DG.Tweening;
 using EditorAttributes;
 using System.Threading.Tasks;
 using System.IO;
+using UnityEngine.Events;
+using Zenject;
 
-public class DoorTransitionAnimation : MonoBehaviour
+public class MonoDoorTransition : MonoBehaviour
 {
     public MonoPathAnimation pathAnimation;
 
     public MonoScriptableAnimation DoorOpen;
     public MonoScriptableAnimation DoorClose;
 
-    public void Animate(MonoCharacterController monoCharacterController, bool pathAnimationReverce = false)
+    public UnityEvent OnEnd;
+
+    public IScriptableAnimationScope Animate(MonoCharacterController monoCharacterController, bool pathAnimationReverce = false)
     {
         float duration = pathAnimation.Duration;
         string walkKey = "Walk";
@@ -22,7 +26,13 @@ public class DoorTransitionAnimation : MonoBehaviour
 
         var transitAnimation = new DoorTransitionAnomationWithCharacter(duration, walkKey, nextKey, DoorOpen, DoorClose, pathAnimation, pathAnimationReverce: pathAnimationReverce);
 
-        monoCharacterController.PlayerAnimationWithAnimatorAndTransform(transitAnimation);
+        var scope = monoCharacterController.PlayerAnimationWithAnimatorAndTransform(transitAnimation);
+        scope.Completed += () =>
+        {
+            OnEnd.Invoke();
+        };
+
+        return scope;
     }
 }
 

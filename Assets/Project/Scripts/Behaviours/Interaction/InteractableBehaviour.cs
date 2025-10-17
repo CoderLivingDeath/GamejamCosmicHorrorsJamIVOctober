@@ -28,11 +28,6 @@ public class InteractableBehaviour : InteractableBehaviourBase
         return this.GetType().Assembly;
     }
 
-    /// <summary>
-    /// ������� ��� ����, �������������� �� MonoBehaviour, ���������� �������� ���������, � ��������� ������.
-    /// </summary>
-    /// <param name="attributeType">��� ��������-������� (typeof(MyAttr)).</param>
-    /// <param name="assembly">��������� ������ ��� ������.</param>
     private IEnumerable<Type> GetBehavioursByAttribute(Type attributeType, Assembly assembly)
     {
         if (assembly == null)
@@ -62,13 +57,6 @@ public class InteractableBehaviour : InteractableBehaviourBase
         }
     }
 
-    /// <summary>
-    /// ������� ��� MonoBehaviour � ������ �� ����� � ��������.
-    /// </summary>
-    /// <param name="name">��� ���� (��� namespace).</param>
-    /// <param name="attributeType">��� �������� (typeof(MyAttribute)).</param>
-    /// <param name="assembly">������ ��� ������.</param>
-    /// <returns>Type ���������� ����������, ���� null ���� �� ������.</returns>
     private Type GetBehaviourByNameAndAttribute(string name, Type attributeType, Assembly assembly)
     {
         if (assembly == null || string.IsNullOrEmpty(name) || attributeType == null)

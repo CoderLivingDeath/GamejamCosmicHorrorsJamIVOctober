@@ -1,9 +1,10 @@
 using UnityEngine;
+using Zenject;
 
 namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
 {
     [InteractableComponent]
-    public class DoorInteractionHandler : MonoInteractableHandlerBase
+    public class DoorTransitionInteractionHandler : MonoInteractableHandlerBase
     {
         [SerializeField]
         private bool PathAnimationReverce;
@@ -15,7 +16,17 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         private string ChackPlayerPrefsKey = "Key_taked";
 
         [SerializeField]
-        private DoorTransitionAnimation doorTransitionAnimation;
+        private MonoDoorTransition doorTransitionAnimation;
+        
+        [SerializeField]
+        private string[] NextId;
+
+        [SerializeField]
+        private string[] PrevId;
+
+        [Inject]
+        private LocationController locationController;
+
         public override void HandleInteract(InteractionContext context)
         {
             if (NeedKey)
@@ -26,9 +37,13 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
                     return;
                 }
             }
+
             MonoCharacterController monoCharacterController = context.Interactor.GetComponent<MonoCharacterController>();
 
-            doorTransitionAnimation.Animate(monoCharacterController, PathAnimationReverce);
+            var scope = doorTransitionAnimation.Animate(monoCharacterController, PathAnimationReverce);
+            scope.Completed += () => locationController.HideLocations(PrevId);
+
+            locationController.ActivateRangeLocation(NextId);
         }
     }
 }

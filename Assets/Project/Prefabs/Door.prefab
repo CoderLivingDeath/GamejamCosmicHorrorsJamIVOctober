@@ -154,6 +154,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 0
+  NeedKey: 0
+  ChackPlayerPrefsKey: Key_taked
   doorTransitionAnimation: {fileID: 2774615947193140925}
 --- !u!65 &947078954747536554
 BoxCollider:
@@ -240,6 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 1
+  NeedKey: 0
+  ChackPlayerPrefsKey: Key_taked
   doorTransitionAnimation: {fileID: 2774615947193140925}
 --- !u!65 &7111110958327776725
 BoxCollider:
@@ -272,8 +276,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4115142279107708262}
   - component: {fileID: 6766775591414320607}
-  - component: {fileID: 8433020882670050320}
   - component: {fileID: 2774615947193140925}
+  - component: {fileID: 8433020882670050320}
   - component: {fileID: 4126479647572572053}
   - component: {fileID: 8325330183299924563}
   m_Layer: 0
@@ -323,35 +327,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8433020882670050320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3514207845395939529}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7848640dad632ce4c8df686f1d00dd6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonoPathAnimation
-  _duration: 1
-  Points:
-  - {x: 0, y: 1.0100005, z: -2}
-  - {x: 0, y: 1.0100005, z: 2}
-  transformToAnimate: {fileID: 0}
-  BoundsCollisionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  coordinateSpace: 1
-  pathType: 0
-  Ease: 2
-  useBoundsSupport: 1
-  boundsSize: {x: 1, y: 2, z: 1}
-  boundsOverlapCheckColliders:
-  - {fileID: 7111110958327776725}
-  - {fileID: 947078954747536554}
-  playReverse: 1
 --- !u!114 &2774615947193140925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,6 +342,50 @@ MonoBehaviour:
   pathAnimation: {fileID: 8433020882670050320}
   DoorOpen: {fileID: 4126479647572572053}
   DoorClose: {fileID: 8325330183299924563}
+  OnEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8433020882670050320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3514207845395939529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7848640dad632ce4c8df686f1d00dd6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonoPathAnimation
+  _duration: 1
+  Points:
+  - {x: 0, y: 1.0100005, z: -2}
+  - {x: 0, y: 1.0100005, z: 3.4113488}
+  transformToAnimate: {fileID: 0}
+  BoundsCollisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  coordinateSpace: 1
+  pathType: 0
+  Ease: 2
+  useBoundsSupport: 1
+  boundsSize: {x: 1, y: 2, z: 1}
+  boundsOverlapCheckColliders:
+  - {fileID: 7111110958327776725}
+  - {fileID: 947078954747536554}
+  playReverse: 1
 --- !u!114 &4126479647572572053
 MonoBehaviour:
   m_ObjectHideFlags: 0

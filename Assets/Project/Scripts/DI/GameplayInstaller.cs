@@ -44,7 +44,7 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
             return;
         }
 
-        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc.gameObject);
+        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc);
 
         Container.BindInterfacesAndSelfTo<LocationController>().AsSingle().WithArguments(locationsDict).NonLazy();
     }
