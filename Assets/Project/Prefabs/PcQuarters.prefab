@@ -43,7 +43,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 2
-  m_Color: {r: 0.3372549, g: 0.654902, b: 0.8941177, a: 1}
+  m_Color: {r: 0.1533019, g: 0.4156425, b: 0.6132076, a: 1}
   m_Intensity: 0.1
   m_Range: 1.0914729
   m_SpotAngle: 66.326675
@@ -89,7 +89,7 @@ Light:
   m_BounceIntensity: 20
   m_ColorTemperature: 2882.9
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 9.4396e-41, y: 2.524355e-29, z: 0, w: 2.9140156e+25}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -298,6 +298,8 @@ GameObject:
   - component: {fileID: 6296575680958776970}
   - component: {fileID: 166451991103141319}
   - component: {fileID: 6995159952555252564}
+  - component: {fileID: 1581361783789408389}
+  - component: {fileID: 6304887149547416347}
   m_Layer: 0
   m_Name: PcQuartersScreen
   m_TagString: Untagged
@@ -413,3 +415,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 486c69818dffcd14f96ce64502516bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Zenject::Zenject.ZenjectStateMachineBehaviourAutoInjecter
+--- !u!114 &1581361783789408389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595418952001521967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7d181ec8d058284c9ad430473d8ca66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mono_EmissionFlickering
+  renderer: {fileID: 0}
+  material: {fileID: 0}
+  light: {fileID: 0}
+  maxWait: 0.1
+  maxFlicker: 0.05
+--- !u!114 &6304887149547416347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5595418952001521967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7d181ec8d058284c9ad430473d8ca66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mono_EmissionFlickering
+  renderer: {fileID: 0}
+  material: {fileID: 0}
+  light: {fileID: 0}
+  maxWait: 1
+  maxFlicker: 0.2
