@@ -163,6 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7103f09fead64f14397becded5b480f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonoCharacterController
+  _state: 0
   inspectorMaxVelocity: 0.2
   BlockX: 0
   BlockY: 1

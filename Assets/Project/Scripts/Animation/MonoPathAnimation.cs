@@ -30,6 +30,8 @@ public class MonoPathAnimation : MonoScriptableAnimation<Transform>
 
     public override float Duration => _duration;
 
+    public bool PlayReverse { get { return playReverse; } set { playReverse = value; } }
+
     private Vector3[] GetPathPoints(bool reverse, Transform context)
     {
         if (Points == null || Points.Length == 0)

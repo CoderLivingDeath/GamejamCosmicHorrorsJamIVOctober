@@ -4,8 +4,26 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-// В будущем возможны оптимизации с использованием ref struct
-public class ScriptableAnimationScope : IDisposable
+public interface IScriptableAnimationScope
+{
+    ScriptableAnimationScope.Status CurrentStatus { get; }
+    float DurationSeconds { get; }
+    TimeSpan Elapsed { get; }
+    TimeSpan Remaining { get; }
+    CancellationToken Token { get; }
+
+    event Action OnStart;
+    event Action Completed;
+    event Action Canceled;
+
+    void Cancel();
+    void Dispose();
+    UniTask WaitForEnd();
+    UniTask WaitForRemaining();
+    UniTask WaitForTime(TimeSpan duration);
+}
+
+public class ScriptableAnimationScope : IDisposable, IScriptableAnimationScope
 {
     public enum Status
     {
@@ -13,12 +31,8 @@ public class ScriptableAnimationScope : IDisposable
     }
 
     public readonly IScriptableAnimation Animation;
-    public readonly UniTask Task;
-    private readonly Stopwatch _watch;
-    private readonly CancellationTokenSource _cts;
-
-    public event Action Completed;
-    public event Action Canceled;
+    private CancellationTokenSource _cts;
+    private Stopwatch _watch;
 
     private bool _disposed;
     private Status _status;
@@ -33,7 +47,7 @@ public class ScriptableAnimationScope : IDisposable
     /// <summary>
     /// Прошедшее время с начала анимации.
     /// </summary>
-    public TimeSpan Elapsed => _watch.Elapsed;
+    public TimeSpan Elapsed => _watch?.Elapsed ?? TimeSpan.Zero;
 
     /// <summary>
     /// Оставшееся время для завершения анимации.
@@ -43,7 +57,7 @@ public class ScriptableAnimationScope : IDisposable
         get
         {
             var durationTs = TimeSpan.FromSeconds(DurationSeconds);
-            var left = durationTs - _watch.Elapsed;
+            var left = durationTs - Elapsed;
             return left > TimeSpan.Zero ? left : TimeSpan.Zero;
         }
     }
@@ -51,25 +65,45 @@ public class ScriptableAnimationScope : IDisposable
     /// <summary>
     /// Токен отмены анимации.
     /// </summary>
-    public CancellationToken Token => _cts.Token;
+    public CancellationToken Token => _cts?.Token ?? CancellationToken.None;
+
+    public event Action OnStart;
+    public event Action Completed;
+    public event Action Canceled;
+
+    private CancellationToken _externalToken;
 
     public ScriptableAnimationScope(IScriptableAnimation animation, CancellationToken externalToken = default)
     {
         Animation = animation ?? throw new ArgumentNullException(nameof(animation));
-        _cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
-        _watch = new Stopwatch();
+        _externalToken = externalToken;
         _status = Status.NotStarted;
+    }
 
-        Task = AnimateWithCatchAsync(_cts.Token);
+    /// <summary>
+    /// Запустить анимацию, вернуть задачу для ожидания завершения.
+    /// </summary>
+    public UniTask Start()
+    {
+        ThrowIfDisposed();
+
+        if (_status != Status.NotStarted)
+            throw new InvalidOperationException("Animation already started");
+
+        _cts = CancellationTokenSource.CreateLinkedTokenSource(_externalToken);
+        _watch = new Stopwatch();
+        _status = Status.Started;
+        _watch.Start();
+
+        OnStart?.Invoke();
+
+        return AnimateWithCatchAsync(_cts.Token);
     }
 
     private async UniTask AnimateWithCatchAsync(CancellationToken token)
     {
         try
         {
-            _status = Status.Started;
-            _watch.Start();
-
             await Animation.Run(token);
 
             _status = Status.Compleated;
@@ -91,16 +125,18 @@ public class ScriptableAnimationScope : IDisposable
         }
     }
 
+    // Остальные методы без изменений...
+
     public async UniTask WaitForEnd()
     {
         ThrowIfDisposed();
         try
         {
-            await Task.AttachExternalCancellation(_cts.Token);
+            await AnimateWithCatchAsync(_cts.Token);
         }
         catch (OperationCanceledException)
         {
-            // Отмена операции
+            // Отмена
         }
     }
 
@@ -116,14 +152,11 @@ public class ScriptableAnimationScope : IDisposable
             }
             catch (OperationCanceledException)
             {
-                // Отмена операции
+                // Отмена
             }
         }
     }
 
-    /// <summary>
-    /// Ожидание оставшегося времени анимации.
-    /// </summary>
     public async UniTask WaitForRemaining()
     {
         await WaitForTime(Remaining);
@@ -132,7 +165,7 @@ public class ScriptableAnimationScope : IDisposable
     public void Cancel()
     {
         ThrowIfDisposed();
-        if (!_cts.IsCancellationRequested)
+        if (_cts != null && !_cts.IsCancellationRequested)
         {
             _cts.Cancel();
             Canceled?.Invoke();
@@ -143,7 +176,7 @@ public class ScriptableAnimationScope : IDisposable
     {
         if (_disposed) return;
         Cancel();
-        _cts.Dispose();
+        _cts?.Dispose();
         _disposed = true;
         GC.SuppressFinalize(this);
     }

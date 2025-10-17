@@ -3,35 +3,94 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using EditorAttributes;
 using UnityEngine;
 
 public class MonoCharacterController : MonoBehaviour
 {
-    private MovementController movementController;
-    private AnimationController animationController;
-    private InteractionController interactionController;
+    private MovementController _movementController;
 
-    public IUniTaskCoroutine MovementCoroutine => movementController.MovementCoroutine;
-    public IUniTaskCoroutine DirectionMonitoringCoroutine => movementController.DirectionMonitoringCoroutine;
-    public IUniTaskCoroutine IsMovingMonitoringCoroutine => movementController.IsMovingMonitoringCoroutine;
+    private AnimationController _animationController;
 
-    public IUniTaskCoroutine InteractionMonitoringCoroutine => interactionController.MonitoringCoroutine;
-
-    public bool IsAnimating => animationController.IsAnimating;
-
-    public MovementStateMachine MovementStateMachine => movementController.MovementStateMachine;
-    public MovementStateMachine.State MovementState => movementController.State;
-    public Vector3 VelocityVector => movementController.VelocityVector;
-    public float MaxVelocity { get => movementController.MaxVelocity; set => movementController.MaxVelocity = value; }
-    public bool IsMoving => movementController.IsMoving;
-    public bool CanMove => movementController.CanMove;
-    public CharacterController CharacterController => movementController.CharacterController;
+    private InteractionController _interactionController;
 
     private Vector3 _lastMovementVector = Vector3.zero;
 
     public Vector3 LastMovementVector => _lastMovementVector;
 
-    public Animator Animator => animationController.Animator;
+    public Animator Animator => _animationController.Animator;
+
+    // TODO: пока только с поддержкой анимаций и пряток. доработать
+    private CharacterStateMachine _stateMachine = new(CharacterStateMachine.State.Idle);
+
+    public CharacterStateMachine.State State => _stateMachine.CurrentState;
+
+    public MovementController MovementController => _movementController;
+    public AnimationController AnimationController => _animationController;
+    public InteractionController InteractionController => _interactionController;
+
+    public IUniTaskCoroutine MovementCoroutine => _movementController.MovementCoroutine;
+    public IUniTaskCoroutine DirectionMonitoringCoroutine => _movementController.DirectionMonitoringCoroutine;
+    public IUniTaskCoroutine IsMovingMonitoringCoroutine => _movementController.IsMovingMonitoringCoroutine;
+
+    public IUniTaskCoroutine InteractionMonitoringCoroutine => _interactionController.MonitoringCoroutine;
+
+    public bool IsAnimating => _animationController.IsAnimating;
+
+    public MovementStateMachine MovementStateMachine => _movementController.MovementStateMachine;
+    public MovementStateMachine.State MovementState => _movementController.State;
+    public Vector3 VelocityVector => _movementController.VelocityVector;
+    public float MaxVelocity { get => _movementController.MaxVelocity; set => _movementController.MaxVelocity = value; }
+    public bool IsMoving => _movementController.IsMoving;
+    public bool CanMove => _movementController.CanMove;
+    public CharacterController CharacterController => _movementController.CharacterController;
+
+
+
+    private void OnMovementStateMachine_OnStateChanged(MovementStateMachine.State state)
+    {
+        switch (state)
+        {
+            case MovementStateMachine.State.Idle:
+                _animationController.FireAnimationTrigger("Idle");
+                break;
+            case MovementStateMachine.State.Run:
+                throw new NotSupportedException();
+            case MovementStateMachine.State.Move:
+                _animationController.FireAnimationTrigger("Walk");
+                break;
+        }
+    }
+
+    private void Configure()
+    {
+        _stateMachine.Subscribe(CharacterStateMachine.State.Animating,
+        () => _movementController.Disable(),
+        () => _movementController.Enable());
+
+        _stateMachine.Subscribe(CharacterStateMachine.State.Hiding,
+        () =>
+        {
+            unityCharacterController.enabled = false;
+            _movementController.Disable();
+        },
+        () =>
+        {
+            unityCharacterController.enabled = true;
+            _movementController.Enable();
+        });
+    }
+
+    #region Unity internal
+
+    [Header("States")]
+    [SerializeField] private CharacterStateMachine.State _state;
+
+    [Button]
+    private void Fire(int trigger)
+    {
+        _stateMachine.TryFire((CharacterStateMachine.Trigger)trigger);
+    }
 
     [Header("Movement Settings")]
     [SerializeField] private float inspectorMaxVelocity;
@@ -51,14 +110,21 @@ public class MonoCharacterController : MonoBehaviour
 
     private void Awake()
     {
-        animationController = new AnimationController(animationLibrary, animator);
-        movementController = new MovementController(unityCharacterController);
-        interactionController = new InteractionController(transform);
+        _animationController = new AnimationController(animationLibrary, animator);
+        _movementController = new MovementController(unityCharacterController);
+        _interactionController = new InteractionController(transform);
 
         // Передать значения из инспектора в контроллеры
-        movementController.MaxVelocity = inspectorMaxVelocity;
-        interactionController.Radius = inspectorRadius;
-        interactionController.Mask = inspectorMask;
+        _movementController.MaxVelocity = inspectorMaxVelocity;
+        _interactionController.Radius = inspectorRadius;
+        _interactionController.Mask = inspectorMask;
+
+        Configure();
+    }
+
+    private void Update()
+    {
+        _state = _stateMachine.CurrentState;
     }
 
     private void OnValidate()
@@ -74,56 +140,41 @@ public class MonoCharacterController : MonoBehaviour
         }
 
         // Обновить значения в контроллерах при изменении в инспекторе
-        if (movementController != null)
-            movementController.MaxVelocity = inspectorMaxVelocity;
+        if (_movementController != null)
+            _movementController.MaxVelocity = inspectorMaxVelocity;
 
-        if (interactionController != null)
+        if (_interactionController != null)
         {
-            interactionController.Radius = inspectorRadius;
-            interactionController.Mask = inspectorMask;
+            _interactionController.Radius = inspectorRadius;
+            _interactionController.Mask = inspectorMask;
         }
 
-        if (animationController != null)
+        if (_animationController != null)
         {
-            animationController.ValidateAnimator(animator);
+            _animationController.ValidateAnimator(animator);
         }
     }
 
     private void OnEnable()
     {
-        movementController?.Enable();
-        interactionController?.Enable();
+        _movementController?.Enable();
+        _interactionController?.Enable();
 
         MovementStateMachine.OnStateChanged += OnMovementStateMachine_OnStateChanged;
     }
 
-    private void OnMovementStateMachine_OnStateChanged(MovementStateMachine.State state)
-    {
-        switch (state)
-        {
-            case MovementStateMachine.State.Idle:
-                animationController.FireAnimationTrigger("Idle");
-                break;
-            case MovementStateMachine.State.Run:
-                throw new NotSupportedException();
-                break;
-            case MovementStateMachine.State.Move:
-                animationController.FireAnimationTrigger("Walk");
-                break;
-        }
-    }
-
     private void OnDisable()
     {
-        movementController?.Disable();
-        interactionController?.Disable();
+        _movementController?.Disable();
+        _interactionController?.Disable();
     }
 
     private void OnDestroy()
     {
-        movementController?.Dispose();
-        interactionController?.Dispose();
+        _movementController?.Dispose();
+        _interactionController?.Dispose();
     }
+    #endregion
 
     private void UpdateScaleByMovementVector(Vector3 movementVector)
     {
@@ -137,75 +188,112 @@ public class MonoCharacterController : MonoBehaviour
     }
 
 
-    // Методы управления анимацией
-    public ScriptableAnimationScope PlayAnimation(string key)
-    {
-        return animationController.PlayAnimation(key);
-    }
-
-    public ScriptableAnimationScope PlayAnimation(IScriptableAnimation animation)
-    {
-        return animationController.PlayAnimation(animation);
-    }
-
-    // TODO: исправить на более подходящую реализацию поворта
-    // эта реализация может не подходить
-    // Методы движения
     public void MoveToDirection(Vector2 direction)
     {
         if (BlockX) direction.x = 0;
         if (BlockY) direction.y = 0;
 
-        movementController.MoveToDirection(direction);
+        _movementController.MoveToDirection(direction);
 
         Vector3 movementVector3 = new Vector3(direction.x, 0, direction.y);
         _lastMovementVector = movementVector3;
 
+        // TODO: исправить на более подходящую реализацию поворта
         UpdateScaleByMovementVector(_lastMovementVector);
     }
 
     public void MoveFromOffset(Vector3 offset)
     {
-        movementController.MoveFromOffset(offset);
+        _movementController.MoveFromOffset(offset);
 
         _lastMovementVector = offset.normalized;
 
+        // TODO: исправить на более подходящую реализацию поворта
         UpdateScaleByMovementVector(_lastMovementVector);
     }
 
     public void Teleport(Vector3 point)
     {
-        movementController.Teleport(point);
+        _movementController.Teleport(point);
     }
 
     // Методы взаимодействия
     public void Interact()
     {
-        interactionController.Interact();
+        _interactionController.Interact();
     }
 
     public void InteractWith(InteractableBehaviour interactable)
     {
-        interactionController.InteractWith(interactable);
+        _interactionController.InteractWith(interactable);
     }
 
     public void FireAnimationTrigger(string key)
     {
-        animationController.FireAnimationTrigger(key);
+        _animationController.FireAnimationTrigger(key);
     }
 
-    public void PlayerAnimationWithAnimatorAndTransform(IScriptableAnimation<(Animator, Transform)> animation, bool @override = false)
+    public ScriptableAnimationScope PlayAnimation(IScriptableAnimation animation)
     {
-        // TODO: Изменить или доработать отключение контроллера движения. Вызывает баги!
-        // Он не должен отключаться либо должен обрабатывать другое поведение во время анимации
-        if (animationController.IsAnimating) return;
-
-        movementController.Disable();
-        var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(animation, (this.animator, this.transform));
-        var scope = animationController.PlayAnimation(wrapper, @override);
+        var scope = _animationController.PlayAnimation(animation);
         if (scope != null)
-            scope.Completed += () => movementController.Enable();
+        {
+            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.PlayAnimation);
+            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.AnimationComplete);
+            scope.Start();
+        }
+
+        return scope;
     }
+
+    // no works
+    [Obsolete]
+    public IScriptableAnimationScope PlayAnimation(string key)
+    {
+        var scope = _animationController.PlayAnimation(key);
+        if (scope != null)
+        {
+            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.PlayAnimation);
+            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.AnimationComplete);
+            scope.Start();
+        }
+
+        return scope;
+    }
+
+    public IScriptableAnimationScope PlayerAnimationWithTransform(IScriptableAnimation<Transform> animation, bool @override = false)
+    {
+        if (@override == false && _animationController.IsAnimating) throw new Exception("In animating.");
+
+        var wrapper = new SciptableAnimationWrapper<Transform>(animation, this.transform);
+        var scope = _animationController.PlayAnimation(wrapper, @override);
+        if (scope != null)
+        {
+            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.PlayAnimation);
+            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.AnimationComplete);
+            scope.Start();
+        }
+
+        return scope;
+    }
+
+    public IScriptableAnimationScope PlayerAnimationWithAnimatorAndTransform(IScriptableAnimation<(Animator, Transform)> animation, bool @override = false)
+    {
+        if (@override == false && _animationController.IsAnimating) throw new Exception("In animating.");
+
+        var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(animation, (this.animator, this.transform));
+        var scope = _animationController.PlayAnimation(wrapper, @override);
+        if (scope != null)
+        {
+            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.PlayAnimation);
+            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.AnimationComplete);
+            scope.Start();
+        }
+
+        return scope;
+    }
+
+    public bool TryFireTrigger(CharacterStateMachine.Trigger trigger) => _stateMachine.TryFire(trigger);
 }
 
 public class SciptableAnimationWrapper<TContext> : IScriptableAnimation
@@ -228,7 +316,7 @@ public class SciptableAnimationWrapper<TContext> : IScriptableAnimation
 
 
 // -----------------------------------------------
-#region  Animation Controller
+#region Animation Controller
 public class AnimationController
 {
     private ScriptableAnimationScope _currentScope;
