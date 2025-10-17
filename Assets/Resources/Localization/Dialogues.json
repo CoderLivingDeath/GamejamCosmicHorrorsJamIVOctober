@@ -12,9 +12,26 @@
                 },
                 {
                     "titleId": "hero",
-                    "textId": "sample_2"
+                    "textId": "sample_3"
+                }
+            ]
+        },
+	"Sample2": {
+            "lines": [
+                {
+                    "titleId": "hero",
+                    "textId": "sample2_1"
+                },
+                {
+                    "titleId": "npc1",
+                    "textId": "sample2_2"
+                },
+                {
+                    "titleId": "hero",
+                    "textId": "sample2_3"
                 }
             ]
         }
+
     }
 }

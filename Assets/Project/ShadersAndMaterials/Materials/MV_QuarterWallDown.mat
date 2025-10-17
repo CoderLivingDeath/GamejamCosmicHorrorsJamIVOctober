@@ -39,7 +39,7 @@ Material:
     - _Glossiness: 0.16
     - _Metallic: 0.65
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.07343093, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.073414735, b: 0, a: 1}
     - _MainOffsetFactor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
