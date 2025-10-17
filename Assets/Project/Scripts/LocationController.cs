@@ -4,11 +4,11 @@ using UnityEngine;
 
 public sealed class LocationController
 {
-    public Dictionary<string, GameObject> Locations { get; private set; }
-    
-    public IEnumerable<KeyValuePair<string, GameObject>> ActiveLocations => Locations.Where(item => item.Value.activeSelf);
+    public Dictionary<string, MonoLocation> Locations { get; private set; }
 
-    public LocationController(Dictionary<string, GameObject> locations)
+    public IEnumerable<KeyValuePair<string, MonoLocation>> ActiveLocations => Locations.Where(item => item.Value.gameObject.activeSelf);
+
+    public LocationController(Dictionary<string, MonoLocation> locations)
     {
         Locations = locations;
     }
@@ -17,7 +17,7 @@ public sealed class LocationController
     {
         if (Locations.TryGetValue(key, out var location))
         {
-            location.SetActive(false);
+            location.gameObject.SetActive(false);
         }
         else
         {
@@ -25,11 +25,33 @@ public sealed class LocationController
         }
     }
 
+    public void HideLocations(IEnumerable<string> keys)
+    {
+        if (keys == null)
+        {
+            Debug.LogWarning("Keys collection is null");
+            return;
+        }
+
+        foreach (var key in keys)
+        {
+            if (Locations.TryGetValue(key, out var location))
+            {
+                location.gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning($"Location with key '{key}' not found");
+            }
+        }
+    }
+
+
     public void ShowLocation(string key)
     {
         if (Locations.TryGetValue(key, out var location))
         {
-            location.SetActive(true);
+            location.gameObject.SetActive(true);
         }
         else
         {
@@ -47,14 +69,16 @@ public sealed class LocationController
 
         foreach (var kv in Locations)
         {
+            Debug.Log(kv.Value.Id);
             bool shouldBeActive = kv.Key == key;
-            if (kv.Value.activeSelf != shouldBeActive)
+            if (kv.Value.gameObject.activeSelf != shouldBeActive)
             {
-                kv.Value.SetActive(shouldBeActive);
+                kv.Value.gameObject.SetActive(shouldBeActive);
                 Debug.Log($"SetActive({shouldBeActive}) for location '{kv.Key}'");
             }
         }
     }
+
     public void ActivateRangeLocation(IEnumerable<string> keys)
     {
         if (keys == null)
@@ -63,24 +87,28 @@ public sealed class LocationController
             return;
         }
 
-        // Для удобства создадим HashSet для быстрого поиска
         var keysSet = new HashSet<string>(keys);
-
-        // Проверим, есть ли хотя бы один ключ в _locations
         bool keyFound = keysSet.Any(k => Locations.ContainsKey(k));
+
         if (!keyFound)
         {
             Debug.LogWarning($"None of the specified keys found in locations");
             return;
         }
 
-        foreach (var kv in Locations)
+        foreach (var key in keysSet)
         {
-            bool shouldBeActive = keysSet.Contains(kv.Key);
-            if (kv.Value.activeSelf != shouldBeActive)
+            if (Locations.TryGetValue(key, out var location))
             {
-                kv.Value.SetActive(shouldBeActive);
-                Debug.Log($"SetActive({shouldBeActive}) for location '{kv.Key}'");
+                if (!location.gameObject.activeSelf)
+                {
+                    location.gameObject.SetActive(true);
+                    Debug.Log($"SetActive(true) for location '{key}'");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Location with key '{key}' not found");
             }
         }
     }

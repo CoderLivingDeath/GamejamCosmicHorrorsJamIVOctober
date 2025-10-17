@@ -6,6 +6,8 @@ using Zenject;
 public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
 {
     public GameObject DialogViewPrefab;
+    public GameObject MonsterPrefab;
+    
     public override void InstallBindings()
     {
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
@@ -21,6 +23,8 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
         Container.BindFactory<DialoguePopupView, DialoguePopupView.Factory>()
         .FromComponentInNewPrefab(DialogViewPrefab)
         .AsTransient();
+
+        Container.BindInterfacesAndSelfTo<MonsterSpawner>().AsSingle().WithArguments(MonsterPrefab).NonLazy();
     }
 
     private void BindLocationController()
@@ -40,7 +44,7 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
             return;
         }
 
-        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc.gameObject);
+        var locationsDict = locations.ToDictionary(loc => loc.Id, loc => loc);
 
         Container.BindInterfacesAndSelfTo<LocationController>().AsSingle().WithArguments(locationsDict).NonLazy();
     }

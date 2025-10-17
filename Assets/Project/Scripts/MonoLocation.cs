@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [ExecuteAlways]
 public class MonoLocation : MonoBehaviour
@@ -8,26 +9,54 @@ public class MonoLocation : MonoBehaviour
 
     public Vector3[] anchors;
 
-    // Автоматический пересчет при любых изменениях (включая изменения в инспекторе)
-    private void OnValidate()
+    public GameObject[] objectsInBounds;
+
+    public LayerMask detectionLayer;
+
+    [Tooltip("Интервал обновления обнаружения объектов в секундах")]
+    public float detectionInterval = 0.5f;
+
+    private Coroutine detectionCoroutine;
+
+    private void OnEnable()
     {
-        RecalculateBounds();
+        StartDetection();
     }
 
-    // Пересчет в редакторе при любых изменениях трансформов
-    private void Update()
+    private void OnDisable()
     {
-        if (!Application.isPlaying)
+        StopDetection();
+    }
+
+    private void StartDetection()
+    {
+        if (detectionCoroutine != null)
+            StopCoroutine(detectionCoroutine);
+        detectionCoroutine = StartCoroutine(DetectObjectsPeriodically());
+    }
+
+    private void StopDetection()
+    {
+        if (detectionCoroutine != null)
         {
-            RecalculateBounds();
+            StopCoroutine(detectionCoroutine);
+            detectionCoroutine = null;
         }
     }
 
-    [ContextMenu("Recalculate Bounds")]
+    private IEnumerator DetectObjectsPeriodically()
+    {
+        while (true)
+        {
+            DetectObjectsInBounds();
+
+            yield return new WaitForSeconds(detectionInterval);
+        }
+    }
+
     public void RecalculateBounds()
     {
         var renderers = GetComponentsInChildren<Renderer>();
-
         if (renderers.Length == 0)
         {
             bounds = new Bounds(transform.position, Vector3.zero);
@@ -38,6 +67,16 @@ public class MonoLocation : MonoBehaviour
         for (int i = 1; i < renderers.Length; i++)
         {
             bounds.Encapsulate(renderers[i].bounds);
+        }
+    }
+
+    public void DetectObjectsInBounds()
+    {
+        Collider[] colliders = Physics.OverlapBox(bounds.center, bounds.extents, Quaternion.identity, detectionLayer);
+        objectsInBounds = new GameObject[colliders.Length];
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            objectsInBounds[i] = colliders[i].gameObject;
         }
     }
 }

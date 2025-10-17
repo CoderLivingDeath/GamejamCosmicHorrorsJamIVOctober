@@ -7,7 +7,7 @@ using System.Linq;
 public class MonoLocationEditor : Editor
 {
     private Color selectedBoundsColor = new Color(0, 1, 0, 0.3f);
-    private Color otherBoundsColor = new Color(1, 0, 0, 0.2f); // красный, полупрозрачный
+    private Color otherBoundsColor = new Color(1, 0, 0, 0.2f);
     private Color selectedAnchorColor = Color.green;
     private Color otherAnchorColor = Color.blue;
 
@@ -29,6 +29,7 @@ public class MonoLocationEditor : Editor
         lastPosition = selectedObject.transform.position;
         CacheOtherAnchors();
         EditorApplication.update += OnEditorUpdate;
+        RecalculateAndApplyBounds();
     }
 
     private void OnDisable()
@@ -44,6 +45,8 @@ public class MonoLocationEditor : Editor
         {
             SnapToClosestAnchor();
             lastPosition = selectedObject.transform.position;
+            RecalculateAndApplyBounds();
+            SceneView.RepaintAll();
         }
     }
 
@@ -51,7 +54,7 @@ public class MonoLocationEditor : Editor
     {
         otherAnchorsCache.Clear();
         var others = UnityEngine.Object.FindObjectsByType<MonoLocation>(UnityEngine.FindObjectsSortMode.None)
-                        .Where(m => m != selectedObject && m.anchors != null);
+                    .Where(m => m != selectedObject && m.anchors != null);
 
         foreach (var other in others)
         {
@@ -75,6 +78,31 @@ public class MonoLocationEditor : Editor
             CacheOtherAnchors();
         }
     }
+
+    private Bounds CalculateBounds()
+    {
+        var renderers = selectedObject.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+        {
+            return new Bounds(selectedObject.transform.position, Vector3.zero);
+        }
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+        return bounds;
+    }
+
+    private void RecalculateAndApplyBounds()
+    {
+        Bounds bounds = CalculateBounds();
+        Undo.RecordObject(selectedObject, "Recalculate Bounds");
+        selectedObject.bounds = bounds;
+        EditorUtility.SetDirty(selectedObject);
+    }
+
     private void DrawBounds(Bounds bounds, Color color, bool dashed = false)
     {
         Handles.color = color;
@@ -84,18 +112,18 @@ public class MonoLocationEditor : Editor
 
         Vector3[] corners = new Vector3[8]
         {
-        c + new Vector3(-ext.x, -ext.y, -ext.z),
-        c + new Vector3(ext.x, -ext.y, -ext.z),
-        c + new Vector3(ext.x, -ext.y, ext.z),
-        c + new Vector3(-ext.x, -ext.y, ext.z),
+            c + new Vector3(-ext.x, -ext.y, -ext.z),
+            c + new Vector3(ext.x, -ext.y, -ext.z),
+            c + new Vector3(ext.x, -ext.y, ext.z),
+            c + new Vector3(-ext.x, -ext.y, ext.z),
 
-        c + new Vector3(-ext.x, ext.y, -ext.z),
-        c + new Vector3(ext.x, ext.y, -ext.z),
-        c + new Vector3(ext.x, ext.y, ext.z),
-        c + new Vector3(-ext.x, ext.y, ext.z)
+            c + new Vector3(-ext.x, ext.y, -ext.z),
+            c + new Vector3(ext.x, ext.y, -ext.z),
+            c + new Vector3(ext.x, ext.y, ext.z),
+            c + new Vector3(-ext.x, ext.y, ext.z)
         };
 
-        float lineWidth = 3f; // Толщина линии
+        float lineWidth = 3f;
 
         if (dashed)
         {
@@ -136,37 +164,32 @@ public class MonoLocationEditor : Editor
         Camera sceneCamera = SceneView.lastActiveSceneView.camera;
         if (sceneCamera == null) return;
 
-        float baseHandleSize = 15f; // базовый размер в пикселях
+        float baseHandleSize = 15f;
 
         for (int i = 0; i < anchors.Length; i++)
         {
             Vector3 worldPos = ml.transform.TransformPoint(anchors[i]);
 
-            // Рассчитываем размер сферы в мировых координатах так, чтобы на экране были baseHandleSize пикселей
             float distance = Vector3.Distance(sceneCamera.transform.position, worldPos);
-            float size = HandleUtility.GetHandleSize(worldPos) * 0.1f; // размер пропорционален HandleUtility.GetHandleSize
-
-            // Альтернативно использовать пиксельный размер (пример)
-            size = HandleUtility.GetHandleSize(worldPos) * baseHandleSize * 0.01f;
+            float size = HandleUtility.GetHandleSize(worldPos) * baseHandleSize * 0.01f;
 
             Handles.SphereHandleCap(0, worldPos, Quaternion.identity, size, EventType.Repaint);
 
-            // Отрисовка текста (чуть выше точки)
             Vector3 labelPos = worldPos + sceneCamera.transform.up * size * 1.5f;
 
             Handles.BeginGUI();
             Vector3 screenPos = HandleUtility.WorldToGUIPoint(labelPos);
-            GUIStyle style = new GUIStyle();
-            style.normal.textColor = color;
-            style.fontStyle = FontStyle.Bold;
-            style.fontSize = 14;
+            GUIStyle style = new GUIStyle
+            {
+                normal = { textColor = color },
+                fontStyle = FontStyle.Bold,
+                fontSize = 14
+            };
             Rect rect = new Rect(screenPos.x - 10, screenPos.y - 10, 20, 20);
             GUI.Label(rect, i.ToString(), style);
             Handles.EndGUI();
         }
     }
-
-
 
     private void SnapToClosestAnchor()
     {
@@ -213,13 +236,13 @@ public class MonoLocationEditor : Editor
         DrawBounds(selectedObject.bounds, selectedBoundsColor, false);
         DrawAnchors(selectedObject, selectedObject.anchors, selectedAnchorColor);
 
-        // Рисуем bounds других объектов пунктиром и другим цветом
         var others = UnityEngine.Object.FindObjectsByType<MonoLocation>(UnityEngine.FindObjectsSortMode.None)
-                        .Where(m => m != selectedObject);
+                    .Where(m => m != selectedObject);
 
         foreach (var other in others)
         {
-            DrawBounds(other.bounds, otherBoundsColor, true);
+            Bounds otherBounds = CalculateBoundsOther(other);
+            DrawBounds(otherBounds, otherBoundsColor, true);
         }
 
         Handles.color = otherAnchorColor;
@@ -236,6 +259,24 @@ public class MonoLocationEditor : Editor
             selectedObject.transform.position = newPosition;
             SnapToClosestAnchor();
             lastPosition = selectedObject.transform.position;
+            RecalculateAndApplyBounds();
+            SceneView.RepaintAll();
         }
+    }
+
+    private Bounds CalculateBoundsOther(MonoLocation ml)
+    {
+        var renderers = ml.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+        {
+            return new Bounds(ml.transform.position, Vector3.zero);
+        }
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            bounds.Encapsulate(renderers[i].bounds);
+        }
+        return bounds;
     }
 }
