@@ -54,6 +54,6 @@ Material:
     - _SecGlossiness: 0
     - _SecMetallic: 0.665
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.07362381, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.07362304, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
