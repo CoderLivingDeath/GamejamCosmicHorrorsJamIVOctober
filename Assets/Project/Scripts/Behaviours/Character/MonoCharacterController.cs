@@ -14,16 +14,18 @@ public class MonoCharacterController : MonoBehaviour
 
     private InteractionController _interactionController;
 
+    // TODO: пока только с поддержкой анимаций и пряток. доработать
+    private CharacterStateMachine _stateMachine = new(CharacterStateMachine.State.Idle);
+
     private Vector3 _lastMovementVector = Vector3.zero;
 
     public Vector3 LastMovementVector => _lastMovementVector;
 
     public Animator Animator => _animationController.Animator;
 
-    // TODO: пока только с поддержкой анимаций и пряток. доработать
-    private CharacterStateMachine _stateMachine = new(CharacterStateMachine.State.Idle);
-
     public CharacterStateMachine.State State => _stateMachine.CurrentState;
+
+    public event Action<CharacterStateMachine.State> StateChanged;
 
     public MovementController MovementController => _movementController;
     public AnimationController AnimationController => _animationController;
@@ -39,13 +41,27 @@ public class MonoCharacterController : MonoBehaviour
 
     public MovementStateMachine MovementStateMachine => _movementController.MovementStateMachine;
     public MovementStateMachine.State MovementState => _movementController.State;
+    public CharacterController CharacterController => _movementController.CharacterController;
     public Vector3 VelocityVector => _movementController.VelocityVector;
     public float MaxVelocity { get => _movementController.MaxVelocity; set => _movementController.MaxVelocity = value; }
     public bool IsMoving => _movementController.IsMoving;
     public bool CanMove => _movementController.CanMove;
-    public CharacterController CharacterController => _movementController.CharacterController;
 
+    #region Govno
+    public void Hide()
+    {
+        body.SetActive(false);
+        unityCharacterController.enabled = false;
+        _movementController.Disable();
+    }
 
+    public void UnHide()
+    {
+        body.SetActive(true);
+        unityCharacterController.enabled = true;
+        _movementController.Enable();
+    }
+    #endregion
 
     private void OnMovementStateMachine_OnStateChanged(MovementStateMachine.State state)
     {
@@ -71,13 +87,17 @@ public class MonoCharacterController : MonoBehaviour
         _stateMachine.Subscribe(CharacterStateMachine.State.Hiding,
         () =>
         {
+            body.SetActive(false);
             unityCharacterController.enabled = false;
             _movementController.Disable();
+            _interactionController.Disable();
         },
         () =>
         {
+            body.SetActive(true);
             unityCharacterController.enabled = true;
             _movementController.Enable();
+            _interactionController.Enable();
         });
     }
 
@@ -108,6 +128,8 @@ public class MonoCharacterController : MonoBehaviour
     [SerializeField] private CharacterController unityCharacterController;
     [SerializeField] private Dictionary<string, IScriptableAnimation> animationLibrary;
 
+    [SerializeField] private GameObject body;
+
     private void Awake()
     {
         _animationController = new AnimationController(animationLibrary, animator);
@@ -119,6 +141,7 @@ public class MonoCharacterController : MonoBehaviour
         _interactionController.Radius = inspectorRadius;
         _interactionController.Mask = inspectorMask;
 
+        _stateMachine.StateChanged += (ev) => StateChanged?.Invoke(ev);
         Configure();
     }
 
@@ -187,7 +210,6 @@ public class MonoCharacterController : MonoBehaviour
         transform.localScale = scale;
     }
 
-
     public void MoveToDirection(Vector2 direction)
     {
         if (BlockX) direction.x = 0;
@@ -225,6 +247,8 @@ public class MonoCharacterController : MonoBehaviour
 
     public void InteractWith(InteractableBehaviour interactable)
     {
+        if (interactable == null) throw new ArgumentNullException();
+
         _interactionController.InteractWith(interactable);
     }
 
@@ -246,8 +270,6 @@ public class MonoCharacterController : MonoBehaviour
         return scope;
     }
 
-    // no works
-    [Obsolete]
     public IScriptableAnimationScope PlayAnimation(string key)
     {
         var scope = _animationController.PlayAnimation(key);
@@ -684,6 +706,7 @@ public class InteractionController : IDisposable
             Interactables = GetInteractables(Transform.position);
             await UniTask.Yield(_timing, cancellationToken);
         }
+        Interactables = null;
     }
 
     public IEnumerable<InteractableBehaviour> FindInteractables(Vector3 origin, float radius, LayerMask mask)
@@ -748,3 +771,54 @@ public class InteractionController : IDisposable
     }
 }
 #endregion
+
+public class InteractionRequestQueueAsync
+{
+    private readonly Queue<Func<UniTask>> _queue = new();
+    private bool _isProcessing = false;
+
+    public void Subscribe(Func<UniTask> task)
+    {
+        _queue.Enqueue(task);
+    }
+
+    public async UniTaskVoid ProcessQueue()
+    {
+        if (_isProcessing) return;
+        _isProcessing = true;
+
+        while (_queue.Count > 0)
+        {
+            var task = _queue.Dequeue();
+            if (task != null)
+                await task();
+        }
+
+        _isProcessing = false;
+    }
+}
+
+public class InteractionRequestQueue
+{
+    private readonly Queue<Action> _queue = new();
+    private bool _isProcessing = false;
+
+    public void Subscribe(Action task)
+    {
+        _queue.Enqueue(task);
+    }
+
+    public void ProcessQueue()
+    {
+        if (_isProcessing) return;
+        _isProcessing = true;
+
+        while (_queue.Count > 0)
+        {
+            var task = _queue.Dequeue();
+            task?.Invoke();
+        }
+
+        _isProcessing = false;
+    }
+}

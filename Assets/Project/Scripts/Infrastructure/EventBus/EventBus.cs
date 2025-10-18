@@ -64,7 +64,8 @@ public class EventBus
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    Debug.LogError($"Exception in subscriber: {e}");
+                    Debug.LogException(e);
                 }
             }
         }
@@ -101,7 +102,8 @@ public class EventBus
                 catch (Exception e)
                 {
                     utcs.TrySetException(e);
-                    Debug.LogError(e);
+                    Debug.LogError($"Exception in subscriber: {e}");
+                    Debug.LogException(e);
                 }
             }, null);
             return utcs.Task;
