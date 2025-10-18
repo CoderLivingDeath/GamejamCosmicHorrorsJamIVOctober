@@ -29,6 +29,8 @@ public class CharacterStateMachine
 
     public State CurrentState => _machine.State;
 
+    public event Action<State> StateChanged;
+
     public void Subscribe(State state, Action onEnter, Action onExit)
     {
         if (!_handlers.ContainsKey(state))
@@ -59,19 +61,21 @@ public class CharacterStateMachine
     {
         _machine = new StateMachine<State, Trigger>(initialState);
 
-        Configure();
-        
-        EnterState(initialState);
-    }
-
-    private void Configure()
-    {
         _machine.OnTransitioned(t =>
         {
             ExitState(t.Source);
             EnterState(t.Destination);
+            StateChanged?.Invoke(t.Destination);
         });
 
+        Configure();
+
+        EnterState(initialState);
+        StateChanged?.Invoke(initialState);
+    }
+
+    private void Configure()
+    {
         _machine.Configure(State.Idle)
             .Permit(Trigger.StartWalking, State.Walk)
             .Permit(Trigger.StartRunning, State.Run)
@@ -98,7 +102,6 @@ public class CharacterStateMachine
             .Permit(Trigger.HidingEnded, State.Idle)
             .Permit(Trigger.StartWalking, State.Walk)
             .Permit(Trigger.StartRunning, State.Run);
-
     }
 
     public bool TryFire(Trigger trigger)
