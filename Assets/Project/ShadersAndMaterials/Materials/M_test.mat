@@ -39,7 +39,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 8daa05f5837af2343ae5b087106df9e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapUnder:
@@ -92,24 +92,24 @@ Material:
     - _CChangeGrad: 0
     - _CChangeHeight: 0
     - _CChangePenGrad: 0
-    - _CChangePenPos: 0.088795915
-    - _CChangePenWidth: 0.088795915
+    - _CChangePenPos: 0.0887959
+    - _CChangePenWidth: 0.0887959
     - _CastShadows: 1
     - _Cull: 2
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _Glossiness: 0.511
-    - _IntBlend: 0.491
+    - _Glossiness: 0.506
+    - _IntBlend: 0.322
     - _IntPosInf: 1
-    - _MaxNoise: 0.1793333
-    - _Metallic: 0.503
-    - _MinNoise: 0.17733333
+    - _MaxNoise: 0.19299755
+    - _Metallic: 0.536
+    - _MinNoise: 0.19099757
     - _NoiseBumpStrength: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _SecGlossiness: 0.453
-    - _SecMetallic: 0.51
+    - _SecGlossiness: 0.514
+    - _SecMetallic: 0.527
     - _SmoothEnd: 0.089666665
     - _SmoothSmooth: 0
     - _SmoothStart: 0.089666665
@@ -121,7 +121,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.16102463, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.16077676, b: 0, a: 1}
     - _Cos: {r: 1, g: 1, b: 1, a: 0}
     - _IntClampPos: {r: 83.3, g: 2, b: 10.16, a: 0}
     - _IntClampWidth: {r: 43.6, g: 5.2, b: 12.89, a: 0}
@@ -129,7 +129,7 @@ Material:
     - _IntPosGrad: {r: 57.699997, g: 57.699997, b: 57.699997, a: 0}
     - _IntScaleFactor: {r: 0.1, g: 0.1, b: 0.1, a: 0}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MainOffsetFactor: {r: 0, g: 0, b: 0.5, a: 0}
+    - _MainOffsetFactor: {r: 0, g: 0, b: 0, a: 0}
     - _MainScaleFactor: {r: 1, g: 1, b: 1, a: 0}
     - _SecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecCos: {r: 1, g: 1, b: 1, a: 0}
