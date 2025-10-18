@@ -173,6 +173,7 @@ MonoBehaviour:
     m_Bits: 64
   animator: {fileID: 4882973878604622102}
   unityCharacterController: {fileID: 2331179488624655105}
+  body: {fileID: 0}
 --- !u!114 &4722830084896105578
 MonoBehaviour:
   m_ObjectHideFlags: 0

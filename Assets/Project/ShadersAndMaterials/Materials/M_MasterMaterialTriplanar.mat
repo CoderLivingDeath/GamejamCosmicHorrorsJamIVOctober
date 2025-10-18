@@ -84,6 +84,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Alpha: 1
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
@@ -121,7 +122,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.16114482, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.16105396, b: 0, a: 1}
     - _Cos: {r: 1, g: 1, b: 1, a: 0}
     - _IntClampPos: {r: 83.3, g: 2, b: 10.16, a: 0}
     - _IntClampWidth: {r: 43.6, g: 5.2, b: 12.89, a: 0}

@@ -254,9 +254,10 @@ public class DualSurfaceShaderEditor : ShaderGUI
             T.SetFloat("_Blending", EditorGUILayout.Slider(T.GetFloat("_Blending"), 0, 1));
         }
         
+            GUILayout.Label("Alpha           ", header);
 
-
-
+            Undo.RecordObject(target, "Changed Value");
+            T.SetFloat("_Alpha", EditorGUILayout.Slider(T.GetFloat("_Alpha"), 0, 1));
 
         DrawUILine(darkline, 1, 20, 1000);
 
