@@ -41,6 +41,8 @@ public class DialoguePopupView : MonoCanvasView, IUI_NextDialogueEventHandler
     [Inject]
     private DialogueManager _dialogueManager;
 
+    public DialoguePopupViewModel ViewModel => _viewModel;
+
     private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         if (_viewModel == null)

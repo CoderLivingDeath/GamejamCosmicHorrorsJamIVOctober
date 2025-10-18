@@ -19,6 +19,8 @@ public partial class DialoguePopupViewModel : ObservableRecipient
     private readonly DialogLog _dialogLogModel;
     private int current = -1;
 
+    public event Action<int> OnNextDialog;
+
     public DialoguePopupViewModel(DialogLog dialogLog, LocalizationService localizationService)
     {
         _dialogLogModel = dialogLog ?? throw new ArgumentNullException(nameof(dialogLog));
@@ -63,6 +65,8 @@ public partial class DialoguePopupViewModel : ObservableRecipient
 
         Title = newTitle;
         Content = newContent;
+
+        OnNextDialog?.Invoke(current);
     }
 
     public void Reset()
