@@ -1,9 +1,17 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using Zenject;
 
 [InteractableComponent]
 public class ShowDialoguePopupInteractableionHandler : MonoInteractableHandlerBase
 {
+    [Serializable]
+    private struct OnNextDialogueContext
+    {
+        public int DialogueId;
+        public UnityEvent On;
+    }
     public string DialogId => _dialogId;
 
     public bool CanInteract = true;
@@ -11,11 +19,18 @@ public class ShowDialoguePopupInteractableionHandler : MonoInteractableHandlerBa
     [SerializeField]
     private string _dialogId;
 
-    [Inject]
-    private ViewManager _viewManager;
+    [SerializeField]
+    private UnityEvent OnStart;
+
+    [SerializeField]
+    private UnityEvent OnEnd;
+
+
+    [SerializeField]
+    private OnNextDialogueContext[] DialogueEvents;
 
     [Inject]
-    private DialoguePopupView.Factory _factory;
+    private InputService inputService;
 
     [Inject]
     private DialogueManager _dialogueManager;
@@ -25,18 +40,6 @@ public class ShowDialoguePopupInteractableionHandler : MonoInteractableHandlerBa
         if (!CanInteract) return;
 
         CanInteract = false;
-        
-        if (_viewManager == null)
-        {
-            Debug.LogError("ShowDialoguePopupInteractableionHandler: ViewManager is not assigned.");
-            return;
-        }
-
-        if (_factory == null)
-        {
-            Debug.LogError("ShowDialoguePopupInteractableionHandler: Factory is not assigned.");
-            return;
-        }
 
         if (!_dialogueManager.TryGetDialog(_dialogId, out var log))
         {
@@ -44,6 +47,27 @@ public class ShowDialoguePopupInteractableionHandler : MonoInteractableHandlerBa
             return;
         }
 
-        _dialogueManager.OpenDialog(log);
+        var view = _dialogueManager.OpenDialog(log);
+
+        view.OnClosed += () =>
+        {
+            OnEnd.Invoke();
+
+            inputService.EnableMap("Player");
+        };
+
+        OnStart.Invoke();
+
+        inputService.DisableMap("Player");
+
+        view.ViewModel.OnNextDialog += (id) => RiseEvent(id);
+    }
+
+    private void RiseEvent(int id)
+    {
+        foreach (var dialogue in DialogueEvents)
+        {
+            if (id == dialogue.DialogueId) dialogue.On.Invoke();
+        }
     }
 }

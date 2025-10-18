@@ -76,16 +76,15 @@ public class DialogueManager
         return false;
     }
 
-    public ViewCreationScope<DialoguePopupView> OpenDialog(DialogLog log)
+    public DialoguePopupView OpenDialog(DialogLog log)
     {
         CloseDialog();
-
         var scope = _viewManager.CreateView(() => _popupFactory.Create(log));
         _viewManager.SetFocus(scope.View);
 
         _currentDialogueView = scope.View;
 
-        return scope;
+        return scope.View;
     }
 
     public void CloseDialog()

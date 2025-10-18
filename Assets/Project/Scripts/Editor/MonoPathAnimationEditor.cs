@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+
 [CustomEditor(typeof(MonoPathAnimation))]
 public class MonoPathAnimationEditor : Editor
 {
@@ -56,7 +57,6 @@ public class MonoPathAnimationEditor : Editor
             SnapAllPointsToSurface();
         }
     }
-
     private void OnSceneGUI()
     {
         if (script.Points == null)
@@ -72,10 +72,17 @@ public class MonoPathAnimationEditor : Editor
                 ? handleTransform.TransformPoint(script.Points[i])
                 : script.Points[i];
 
+            // Корректируем центр bounds по флагу useBoundsBottomPivot
+            Vector3 boundsCenter = currentWorldPos;
+            if (script.useBoundsBottomPivot)
+            {
+                boundsCenter = currentWorldPos - Vector3.down * (script.boundsSize.y * 0.5f);
+            }
+
             bool fitsBounds = true;
             if (script.useBoundsSupport)
             {
-                fitsBounds = CanPlaceBoundsAtPosition(currentWorldPos, script.boundsSize, script.boundsOverlapCheckColliders, script.BoundsCollisionLayers);
+                fitsBounds = CanPlaceBoundsAtPosition(boundsCenter, script.boundsSize, script.boundsOverlapCheckColliders, script.BoundsCollisionLayers);
             }
 
             Color cubeColor;
@@ -93,9 +100,9 @@ public class MonoPathAnimationEditor : Editor
             }
 
             Handles.color = cubeColor;
-            Handles.DrawWireCube(currentWorldPos, script.boundsSize);
+            Handles.DrawWireCube(boundsCenter, script.boundsSize);
 
-            DrawCapsule(currentWorldPos, script.boundsSize, cubeColor);
+            DrawCapsule(boundsCenter, script.boundsSize, cubeColor);
 
             EditorGUI.BeginChangeCheck();
 
@@ -117,10 +124,10 @@ public class MonoPathAnimationEditor : Editor
                 EditorUtility.SetDirty(script);
             }
 
-            float handleSize = HandleUtility.GetHandleSize(currentWorldPos);
+            float handleSize = HandleUtility.GetHandleSize(newWorldPos);
 
-            Vector3 labelPos = currentWorldPos + Vector3.Scale(settings.labelPositionOffset, Vector3.one * handleSize);
-            Vector3 buttonPos = currentWorldPos + Vector3.Scale(settings.buttonPositionOffset, Vector3.one * handleSize);
+            Vector3 labelPos = newWorldPos + Vector3.Scale(settings.labelPositionOffset, Vector3.one * handleSize);
+            Vector3 buttonPos = newWorldPos + Vector3.Scale(settings.buttonPositionOffset, Vector3.one * handleSize);
 
             Handles.BeginGUI();
 
@@ -313,60 +320,60 @@ public class MonoPathAnimationEditor : Editor
     }
 
 
-private void SnapPointToSurface(int index, Transform handleTransform)
-{
-    Vector3 origin = script.coordinateSpace == MonoPathAnimation.CoordinateSpace.LocalToMonoPathAnimation
-        ? handleTransform.TransformPoint(script.Points[index])
-        : script.Points[index];
-
-    int layerMask = script.BoundsCollisionLayers;
-
-    float maxDistance = 10f;
-    Vector3 rayOrigin = origin + Vector3.up * 5f;
-    Vector3 rayDir = Vector3.down;
-
-    RaycastHit[] hits = Physics.RaycastAll(rayOrigin, rayDir, maxDistance, layerMask);
-
-    // Фильтруем все попадания, исключая игнорируемые коллайдеры
-    RaycastHit? validHit = null;
-    foreach (var hit in hits)
+    private void SnapPointToSurface(int index, Transform handleTransform)
     {
-        if (script.boundsOverlapCheckColliders != null &&
-            Array.Exists(script.boundsOverlapCheckColliders, c => c == hit.collider))
+        Vector3 origin = script.coordinateSpace == MonoPathAnimation.CoordinateSpace.LocalToMonoPathAnimation
+            ? handleTransform.TransformPoint(script.Points[index])
+            : script.Points[index];
+
+        int layerMask = script.BoundsCollisionLayers;
+
+        float maxDistance = 10f;
+        Vector3 rayOrigin = origin + Vector3.up * 5f;
+        Vector3 rayDir = Vector3.down;
+
+        RaycastHit[] hits = Physics.RaycastAll(rayOrigin, rayDir, maxDistance, layerMask);
+
+        // Фильтруем все попадания, исключая игнорируемые коллайдеры
+        RaycastHit? validHit = null;
+        foreach (var hit in hits)
         {
-            continue; // Игнорируем этот хит
+            if (script.boundsOverlapCheckColliders != null &&
+                Array.Exists(script.boundsOverlapCheckColliders, c => c == hit.collider))
+            {
+                continue; // Игнорируем этот хит
+            }
+
+            if (validHit == null || hit.distance < validHit.Value.distance)
+            {
+                validHit = hit; // Берём ближайший подходящий хит
+            }
         }
 
-        if (validHit == null || hit.distance < validHit.Value.distance)
+        if (validHit.HasValue)
         {
-            validHit = hit; // Берём ближайший подходящий хит
+            Vector3 snappedPos = validHit.Value.point;
+
+            if (script.useBoundsSupport)
+            {
+                float heightOffset = 0.01f;
+                snappedPos += Vector3.up * (script.boundsSize.y * 0.5f + heightOffset);
+            }
+
+            Undo.RecordObject(script, $"Snap Point {index} To Surface");
+
+            if (script.coordinateSpace == MonoPathAnimation.CoordinateSpace.LocalToMonoPathAnimation)
+            {
+                script.Points[index] = handleTransform.InverseTransformPoint(snappedPos);
+            }
+            else
+            {
+                script.Points[index] = snappedPos;
+            }
+
+            EditorUtility.SetDirty(script);
         }
     }
-
-    if (validHit.HasValue)
-    {
-        Vector3 snappedPos = validHit.Value.point;
-
-        if (script.useBoundsSupport)
-        {
-            float heightOffset = 0.01f;
-            snappedPos += Vector3.up * (script.boundsSize.y * 0.5f + heightOffset);
-        }
-
-        Undo.RecordObject(script, $"Snap Point {index} To Surface");
-
-        if (script.coordinateSpace == MonoPathAnimation.CoordinateSpace.LocalToMonoPathAnimation)
-        {
-            script.Points[index] = handleTransform.InverseTransformPoint(snappedPos);
-        }
-        else
-        {
-            script.Points[index] = snappedPos;
-        }
-
-        EditorUtility.SetDirty(script);
-    }
-}
 
     private void SnapAllPointsToSurface()
     {

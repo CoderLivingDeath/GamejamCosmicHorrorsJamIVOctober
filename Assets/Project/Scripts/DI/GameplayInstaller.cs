@@ -7,9 +7,12 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
 {
     public GameObject DialogViewPrefab;
     public GameObject MonsterPrefab;
+
+    public LocationSettings locationSettings;
     
     public override void InstallBindings()
     {
+        Container.Bind<LocationSettings>().FromInstance(locationSettings).AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
         BindLocationController();
 

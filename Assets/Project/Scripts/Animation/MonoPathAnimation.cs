@@ -23,6 +23,7 @@ public class MonoPathAnimation : MonoScriptableAnimation<Transform>
 
     [Header("Bounds Support")]
     public bool useBoundsSupport = false;
+    public bool useBoundsBottomPivot = false;
     public Vector3 boundsSize = Vector3.one;
     public Collider[] boundsOverlapCheckColliders = Array.Empty<Collider>();
 

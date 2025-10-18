@@ -8,9 +8,12 @@ public sealed class LocationController
 
     public IEnumerable<KeyValuePair<string, MonoLocation>> ActiveLocations => Locations.Where(item => item.Value.gameObject.activeSelf);
 
-    public LocationController(Dictionary<string, MonoLocation> locations)
+    public LocationSettings locationSettings;
+
+    public LocationController(Dictionary<string, MonoLocation> locations, LocationSettings locationSettings)
     {
         Locations = locations;
+        this.locationSettings = locationSettings;
     }
 
     public void HideLocation(string key)
@@ -112,5 +115,4 @@ public sealed class LocationController
             }
         }
     }
-
 }

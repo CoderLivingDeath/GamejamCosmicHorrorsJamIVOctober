@@ -8,7 +8,6 @@ public class LocalizationData
     public Dictionary<string, string> Keys { get; set; }
 }
 
-
 [Serializable]
 public class DialogsData
 {
