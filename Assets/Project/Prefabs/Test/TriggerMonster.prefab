@@ -184,6 +184,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MONSTER
       objectReference: {fileID: 0}
+    - target: {fileID: 2378856002128295761, guid: 28085727c2d320646b2f06ea044ca102, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5342424947094728902, guid: 28085727c2d320646b2f06ea044ca102, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.23
