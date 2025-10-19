@@ -19,7 +19,7 @@ public class LightBreath : MonoBehaviour
     {
         timer += Time.deltaTime * speed;
         // ѕлавна€ пульсаци€ интенсивности через синус
-        float intensity = Mathf.Lerp(minIntensity, maxIntensity, ((Mathf.Sin(timer) + 1f) / 2f) + Random.Range(-0.1f, 0.1f));
+        float intensity = Mathf.Lerp(minIntensity, maxIntensity, ((Mathf.Sin(timer) + 1f)));
         targetLight.intensity = intensity;
     }
 }

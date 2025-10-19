@@ -47,7 +47,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 2d9384a6190c8254babc77a051696eb5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
@@ -58,7 +58,7 @@ Material:
     - _Metallic: 0
     - _QueueControl: 0
     - _Smoothness: 0
-    - _normalStrenght: 0
+    - _normalStrenght: 2
     m_Colors:
     - _SpecularColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
