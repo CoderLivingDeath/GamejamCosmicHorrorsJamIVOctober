@@ -74,6 +74,16 @@ public class MonoCharacterController : MonoBehaviour
         _stateMachine.Subscribe(CharacterStateMachine.State.Moving,
         () =>
         {
+
+        },
+        () =>
+        {
+
+        });
+
+        _stateMachine.Subscribe(CharacterStateMachine.State.Idle,
+        () =>
+        {
             animator.SetTrigger("Idle");
         },
         () =>
