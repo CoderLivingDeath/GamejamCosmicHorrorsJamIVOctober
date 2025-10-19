@@ -6,10 +6,11 @@ using Zenject;
 public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
 {
     public GameObject DialogViewPrefab;
+    public GameObject PuzzlePrefab;
     public GameObject MonsterPrefab;
 
     public LocationSettings locationSettings;
-    
+
     public override void InstallBindings()
     {
         Container.Bind<LocationSettings>().FromInstance(locationSettings).AsSingle();
@@ -25,7 +26,11 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
 
         Container.BindFactory<DialoguePopupView, DialoguePopupView.Factory>()
         .FromComponentInNewPrefab(DialogViewPrefab)
-        .AsTransient();
+        .AsSingle();
+
+        Container.BindFactory<DoorPuzzlePopupView, DoorPuzzlePopupView.Factory>()
+        .FromComponentInNewPrefab(PuzzlePrefab)
+        .AsSingle();
 
         Container.BindInterfacesAndSelfTo<MonsterSpawner>().AsSingle().WithArguments(MonsterPrefab).NonLazy();
     }
