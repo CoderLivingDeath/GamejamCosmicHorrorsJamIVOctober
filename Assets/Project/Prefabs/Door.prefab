@@ -54,7 +54,7 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 3
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 972513eb06d997a419e74b05e4160815, type: 2}
@@ -155,6 +155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 0
   NeedKey: 0
+  HideWall: 0
+  HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
   doorTransitionAnimation: {fileID: 2774615947193140925}
   NextId: []
@@ -235,7 +237,7 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 3
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 972513eb06d997a419e74b05e4160815, type: 2}
@@ -358,6 +360,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 1
   NeedKey: 0
+  HideWall: 0
+  HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
   doorTransitionAnimation: {fileID: 2774615947193140925}
   NextId: []
@@ -611,6 +615,7 @@ MonoBehaviour:
   pathType: 0
   Ease: 2
   useBoundsSupport: 1
+  useBoundsBottomPivot: 0
   boundsSize: {x: 1, y: 2, z: 1}
   boundsOverlapCheckColliders:
   - {fileID: 7111110958327776725}
@@ -699,7 +704,7 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 3
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 972513eb06d997a419e74b05e4160815, type: 2}
@@ -880,7 +885,7 @@ SpriteRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 3
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 972513eb06d997a419e74b05e4160815, type: 2}
