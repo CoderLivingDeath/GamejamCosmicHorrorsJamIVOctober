@@ -10,7 +10,8 @@ public class Trigger : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             Action.Invoke();
-        }
 
+            GameObject.Destroy(this.gameObject);
+        }
     }
 }
