@@ -155,6 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 0
   NeedKey: 0
+  NeedPuzzle: 0
   HideWall: 0
   HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
@@ -360,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 1
   NeedKey: 0
+  NeedPuzzle: 0
   HideWall: 0
   HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
@@ -615,7 +617,7 @@ MonoBehaviour:
   pathType: 0
   Ease: 2
   useBoundsSupport: 1
-  useBoundsBottomPivot: 0
+  useBoundsBottomPivot: 1
   boundsSize: {x: 1, y: 2, z: 1}
   boundsOverlapCheckColliders:
   - {fileID: 7111110958327776725}
@@ -659,6 +661,7 @@ GameObject:
   m_Component:
   - component: {fileID: 60732604432230890}
   - component: {fileID: 534017193139938631}
+  - component: {fileID: 9192403173837074992}
   m_Layer: 0
   m_Name: Left
   m_TagString: Untagged
@@ -740,6 +743,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!65 &9192403173837074992
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4412252623667979721}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2827966, y: 2.7580173, z: 0.2}
+  m_Center: {x: -0.6319748, y: -0.12099135, z: 0}
 --- !u!1 &6271840510634730982
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,6 +864,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7618338575635719343}
   - component: {fileID: 7748771807607585710}
+  - component: {fileID: 7477448152451198497}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
@@ -921,6 +946,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!65 &7477448152451198497
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7031586878579639018}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2503127, y: 2.7580173, z: 0.2}
+  m_Center: {x: 0.51665777, y: -0.12099135, z: 0}
 --- !u!1 &7508655389328200609
 GameObject:
   m_ObjectHideFlags: 0

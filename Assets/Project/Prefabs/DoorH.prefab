@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7161527895751966148}
   - component: {fileID: 964488924287283974}
+  - component: {fileID: 3543800246442124285}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
@@ -90,6 +91,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!65 &3543800246442124285
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41030109151866899}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.3237813, y: 3, z: 1.0447179}
+  m_Center: {x: 0.64077914, y: 0, z: 0.4607015}
 --- !u!1 &493751114918035068
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,6 +267,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 1
   NeedKey: 0
+  NeedPuzzle: 0
   HideWall: 0
   HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
@@ -440,6 +463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8519052812827511776}
   - component: {fileID: 6012635148663326757}
+  - component: {fileID: 6508218848289073774}
   m_Layer: 0
   m_Name: Left
   m_TagString: Untagged
@@ -520,6 +544,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!65 &6508218848289073774
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3696160401390885052}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.3062419, y: 3, z: 1.1039895}
+  m_Center: {x: -0.6627793, y: 0, z: 0.49004412}
 --- !u!1 &4844509681165662480
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.DoorInteractionHandler
   PathAnimationReverce: 0
   NeedKey: 0
+  NeedPuzzle: 0
   HideWall: 0
   HideDoor: 0
   ChackPlayerPrefsKey: Key_taked
@@ -1059,6 +1105,7 @@ MonoBehaviour:
   pathType: 0
   Ease: 2
   useBoundsSupport: 1
+  useBoundsBottomPivot: 0
   boundsSize: {x: 1, y: 2, z: 1}
   boundsOverlapCheckColliders:
   - {fileID: 2731754129685048925}

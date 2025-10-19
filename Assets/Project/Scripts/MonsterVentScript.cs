@@ -1,19 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 using Zenject;
 
 public class MonsterVentScript : MonoBehaviour
 {
-    [Inject]
-    private MonsterSpawner monsterSpawner;
-
     public float Duration = 10f;
     public Animator animator;
     public AudioSource audioSource;
 
-    public Transform SpawnPoint;
-
     private Coroutine timerCoroutine;
+
+    // События UnityEvent для начала и окончания таймера
+    public UnityEvent OnTimerStarted;
+    public UnityEvent OnTimerEnded;
 
     public void StartAnimation()
     {
@@ -23,11 +23,6 @@ public class MonsterVentScript : MonoBehaviour
         }
     }
 
-    public void SpawnMonster()
-    {
-        monsterSpawner.Spawn(SpawnPoint.position);
-    }
-
     public void StartTimer()
     {
         if (timerCoroutine != null)
@@ -35,6 +30,9 @@ public class MonsterVentScript : MonoBehaviour
             StopCoroutine(timerCoroutine);
         }
         timerCoroutine = StartCoroutine(TimerCoroutine());
+
+        // Вызов события начала таймера
+        OnTimerStarted?.Invoke();
     }
 
     public void CancleTimer()
@@ -58,14 +56,15 @@ public class MonsterVentScript : MonoBehaviour
     public void CancleTimerAndSpawnMonster()
     {
         CancleTimer();
-        SpawnMonster();
     }
 
     // Корутин таймера
     private IEnumerator TimerCoroutine()
     {
         yield return new WaitForSeconds(Duration);
-        SpawnMonster();
         timerCoroutine = null;
+
+        // Вызов события окончания таймера
+        OnTimerEnded?.Invoke();
     }
 }
