@@ -2,15 +2,15 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
-[CustomEditor(typeof(InteractableBehaviour))]
+[CustomEditor(typeof(MonoInteractable))]
 public class InteractableBehaviourEditor : Editor
 {
-    private InteractableBehaviour targetBehaviour;
+    private MonoInteractable targetBehaviour;
     private BoxBoundsHandle boundsHandle = new BoxBoundsHandle();
 
     private void OnEnable()
     {
-        targetBehaviour = (InteractableBehaviour)target;
+        targetBehaviour = (MonoInteractable)target;
         boundsHandle.SetColor(Color.cyan);
     }
 
@@ -61,7 +61,7 @@ public class InteractableBehaviourEditor : Editor
             so.ApplyModifiedProperties();
         }
 
-        var allInteractables = Object.FindObjectsByType<InteractableBehaviour>(FindObjectsSortMode.None);
+        var allInteractables = Object.FindObjectsByType<MonoInteractable>(FindObjectsSortMode.None);
 
         Handles.color = Color.yellow; // цвет для других interactables
         foreach (var interactable in allInteractables)

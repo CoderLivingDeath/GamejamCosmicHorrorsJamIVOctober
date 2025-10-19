@@ -311,7 +311,7 @@ public class MonoCharacterController : MonoBehaviour
         _interactionController.Interact();
     }
 
-    public void InteractWith(InteractableBehaviour interactable)
+    public void InteractWith(MonoInteractable interactable)
     {
         if (interactable == null) throw new ArgumentNullException();
 

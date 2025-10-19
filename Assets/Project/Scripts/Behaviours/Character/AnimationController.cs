@@ -8,11 +8,15 @@ public class AnimationController
 
     private readonly Dictionary<string, IScriptableAnimation> _animationLibrary;
 
-    private Animator animator;
-
     public bool IsAnimating => _currentScope != null;
 
-    public Animator Animator => animator;
+    public Animator Animator
+    {
+        get { return animator; }
+        set { animator = value; }
+    }
+
+    private Animator animator;
 
     public AnimationController(Dictionary<string, IScriptableAnimation> animationLibrary, Animator animator)
     {

@@ -2,26 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Video;
 
-public class InteractableBehaviour : InteractableBehaviourBase
+public class MonoInteractable : MonoBehaviour
 {
+    public int Priority => _priority;
+    public bool BoundsSupport => _boundsSupport;
+    public Bounds? InteractionBounds => _interactionBounds;
+
+    #region  Unity Internal
     [SerializeField]
     private int _priority = 0;
 
-    public int Priority => _priority;
-
-
-    public bool BoundsSupport = false;
+    [SerializeField]
+    private bool _boundsSupport = false;
 
     [SerializeField]
     private Bounds _interactionBounds;
-
-    public Bounds? InteractionBounds => _interactionBounds;
-
 
     [SerializeField]
     private bool _canInteract = true;
@@ -35,7 +33,15 @@ public class InteractableBehaviour : InteractableBehaviourBase
     private string Interaction;
 
     public SelectItem[] strs => GetSelectedItems().ToArray();
+
 #endif
+
+    private void OnDestroy()
+    {
+        OnInteractEvent.RemoveAllListeners();
+    }
+
+    #endregion 
 
     public Assembly GetAssembly()
     {
@@ -46,7 +52,6 @@ public class InteractableBehaviour : InteractableBehaviourBase
     {
         return _canInteract && this.enabled && IsWithinInteractionBounds(interactorPosition);
     }
-
 
     public bool IsWithinInteractionBounds(Vector3 interactorPosition)
     {
@@ -167,7 +172,7 @@ public class InteractableBehaviour : InteractableBehaviourBase
         return _canInteract && this.enabled;
     }
 
-    public override void Interact(GameObject sender)
+    public void Interact(GameObject sender)
     {
         if (!CanInteract()) return;
 
@@ -182,30 +187,16 @@ public class InteractableBehaviour : InteractableBehaviourBase
 
         OnInteractEvent?.Invoke();
     }
-
-    private void OnDestroy()
-    {
-        OnInteractEvent.RemoveAllListeners();
-    }
 }
 
 public readonly struct InteractionContext
 {
-    public readonly InteractableBehaviour Interactable;
+    public readonly MonoInteractable Interactable;
     public readonly GameObject Interactor;
 
-    public InteractionContext(InteractableBehaviour interactable, GameObject interactor)
+    public InteractionContext(MonoInteractable interactable, GameObject interactor)
     {
         Interactable = interactable;
         Interactor = interactor;
-    }
-}
-
-public abstract class InteractableBehaviourBase : MonoBehaviour
-{
-
-    public virtual void Interact(GameObject sender)
-    {
-
     }
 }

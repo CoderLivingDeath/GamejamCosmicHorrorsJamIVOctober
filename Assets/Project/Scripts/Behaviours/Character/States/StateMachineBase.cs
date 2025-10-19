@@ -83,9 +83,9 @@ public class CharacterStateMachine
     private void Configure()
     {
         // Активное состояние персонажа
-        _machine.Configure(State.Active)
-            .OnEntry(() => Debug.Log("Персонаж активен"))
-            .OnExit(() => Debug.Log("Персонаж неактивен"));
+        _machine.Configure(State.Active);
+            // .OnEntry(() => Debug.Log("Персонаж активен"))
+            // .OnExit(() => Debug.Log("Персонаж неактивен"));
 
         // Состояние анимации (блокирует другие действия)
         _machine.Configure(State.Animation)
@@ -97,12 +97,12 @@ public class CharacterStateMachine
             .Ignore(Trigger.StartAnimation)
             .OnEntry(() =>
             {
-                Debug.Log("Проигрывается анимация");
+                // Debug.Log("Проигрывается анимация");
                 _triggerBuffer = null; // Очистка буфера при входе в анимацию
             })
             .OnExit(() =>
             {
-                Debug.Log("Анимация завершена");
+                // Debug.Log("Анимация завершена");
                 // При выходе из анимации если буфер заполнен - воспроизводим сохраненный триггер
                 if (_triggerBuffer.HasValue)
                 {

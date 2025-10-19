@@ -10,9 +10,9 @@ public class InteractionController : IDisposable
     public Transform Transform;
 
     private float _radius;
-    public IEnumerable<InteractableBehaviour> Interactables;
-    private InteractableBehaviour _selectedInteractable;
-    public InteractableBehaviour SelectedInteractable
+    public IEnumerable<MonoInteractable> Interactables;
+    private MonoInteractable _selectedInteractable;
+    public MonoInteractable SelectedInteractable
     {
         get => _selectedInteractable;
         private set
@@ -25,7 +25,7 @@ public class InteractionController : IDisposable
         }
     }
 
-    public event Action<InteractableBehaviour> SelectedInteractableChanged;
+    public event Action<MonoInteractable> SelectedInteractableChanged;
 
 
     private LayerMask _mask;
@@ -55,13 +55,13 @@ public class InteractionController : IDisposable
     //     Interactables = null;
     // }
 
-    public IEnumerable<InteractableBehaviour> FindInteractables(Vector3 origin, float radius, LayerMask mask)
+    public IEnumerable<MonoInteractable> FindInteractables(Vector3 origin, float radius, LayerMask mask)
     {
         Collider[] hits = Physics.OverlapSphere(origin, radius, mask);
-        HashSet<InteractableBehaviour> result = new HashSet<InteractableBehaviour>();
+        HashSet<MonoInteractable> result = new HashSet<MonoInteractable>();
         foreach (var hit in hits)
         {
-            var interactable = hit.GetComponent<InteractableBehaviour>();
+            var interactable = hit.GetComponent<MonoInteractable>();
             if (interactable != null)
             {
                 result.Add(interactable);
@@ -70,23 +70,23 @@ public class InteractionController : IDisposable
         return result;
     }
 
-    public IEnumerable<InteractableBehaviour> GetInteractables(Vector3 position)
+    public IEnumerable<MonoInteractable> GetInteractables(Vector3 position)
     {
         return FindInteractables(position, _radius, _mask)
             .OrderBy(item => Vector3.Distance(position, item.transform.position));
     }
 
-    public IEnumerable<InteractableBehaviour> GetInteractables(Vector3 position,
-            Func<InteractableBehaviour, bool> additionalFilter = null,
-            Func<InteractableBehaviour, float> orderBySelector = null,
+    public IEnumerable<MonoInteractable> GetInteractables(Vector3 position,
+            Func<MonoInteractable, bool> additionalFilter = null,
+            Func<MonoInteractable, float> orderBySelector = null,
             LayerMask obstacleLayerMask = default)
     {
-        List<InteractableBehaviour> interactables = new List<InteractableBehaviour>();
+        List<MonoInteractable> interactables = new List<MonoInteractable>();
 
         Collider[] hits = Physics.OverlapSphere(position, _radius, _mask);
         for (int i = 0; i < hits.Length; i++)
         {
-            var interactable = hits[i].GetComponent<InteractableBehaviour>();
+            var interactable = hits[i].GetComponent<MonoInteractable>();
             if (interactable == null)
                 continue;
 
@@ -130,8 +130,8 @@ public class InteractionController : IDisposable
     }
 
     public void UpdateInteractables(Vector3 position,
-        Func<InteractableBehaviour, bool> additionalFilter = null,
-        Func<InteractableBehaviour, float> orderBySelector = null,
+        Func<MonoInteractable, bool> additionalFilter = null,
+        Func<MonoInteractable, float> orderBySelector = null,
          LayerMask obstacleLayerMask = default)
     {
         Interactables = GetInteractables(position, additionalFilter, orderBySelector, obstacleLayerMask);
@@ -147,7 +147,7 @@ public class InteractionController : IDisposable
         }
     }
 
-    public void InteractWith(InteractableBehaviour interactableBehaviour)
+    public void InteractWith(MonoInteractable interactableBehaviour)
     {
         if (interactableBehaviour == null) return;
         interactableBehaviour.Interact(Transform.gameObject);
