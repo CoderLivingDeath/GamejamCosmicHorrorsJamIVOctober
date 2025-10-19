@@ -18,9 +18,7 @@ public class MovementStateMachine
     }
 
     public State CurrentState => _stateMachine.State;
-
     public event Action<State> OnStateChanged;
-
     private StateMachine<State, Trigger> _stateMachine;
 
     public MovementStateMachine()
@@ -33,14 +31,19 @@ public class MovementStateMachine
         _stateMachine = new StateMachine<State, Trigger>(State.Idle);
 
         _stateMachine.Configure(State.Idle)
-        .Permit(Trigger.Move, State.Move)
-        .OnEntry(() => OnStateChanged?.Invoke(State.Idle));
+            .Permit(Trigger.Move, State.Move)
+            .Permit(Trigger.Run, State.Run)
+            .OnEntry(() => OnStateChanged?.Invoke(State.Idle));
 
         _stateMachine.Configure(State.Move)
-        .Permit(Trigger.Idle, State.Idle)
-        .OnEntry(() => OnStateChanged?.Invoke(State.Move));
+            .Permit(Trigger.Idle, State.Idle)
+            .Permit(Trigger.Run, State.Run)
+            .OnEntry(() => OnStateChanged?.Invoke(State.Move));
 
-        // TODO: обработка run
+        _stateMachine.Configure(State.Run)
+            .Permit(Trigger.Idle, State.Idle)
+            .Permit(Trigger.Move, State.Move)
+            .OnEntry(() => OnStateChanged?.Invoke(State.Run));
     }
 
     private void FireTrigger(Trigger trigger)
@@ -51,10 +54,13 @@ public class MovementStateMachine
         }
     }
 
-    public void UpdateState(bool isMove)
+    public void UpdateState(bool isMove, bool isRun = false)
     {
-        // TODO: обработка run
-        if (isMove)
+        if (isRun)
+        {
+            FireTrigger(Trigger.Run);
+        }
+        else if (isMove)
         {
             FireTrigger(Trigger.Move);
         }

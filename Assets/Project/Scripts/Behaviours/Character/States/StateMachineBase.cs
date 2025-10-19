@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
 using Stateless;
+using UnityEngine;
 
 public class CharacterStateMachine
 {
     public enum State
     {
         Idle,
-        Walk,
-        Run,
-        Animating,
-        Hiding
+        Active,
+        Moving,
+        Walking,
+        Running,
+        Hiding,
+        Animation
     }
 
     public enum Trigger
@@ -18,14 +21,17 @@ public class CharacterStateMachine
         StartWalking,
         StartRunning,
         StopMoving,
-        PlayAnimation,
-        AnimationComplete,
-        HidingStarted,
-        HidingEnded
+        StartHiding,
+        StopHiding,
+        StartAnimation,
+        StopAnimation,
+        DoNothing
     }
 
     private readonly StateMachine<State, Trigger> _machine;
     private readonly Dictionary<State, StateHandler<State>> _handlers = new();
+
+    private Trigger? _triggerBuffer = null; // буфер триггеров во время анимации
 
     public State CurrentState => _machine.State;
 
@@ -76,36 +82,93 @@ public class CharacterStateMachine
 
     private void Configure()
     {
+        // Активное состояние персонажа
+        _machine.Configure(State.Active)
+            .OnEntry(() => Debug.Log("Персонаж активен"))
+            .OnExit(() => Debug.Log("Персонаж неактивен"));
+
+        // Состояние анимации (блокирует другие действия)
+        _machine.Configure(State.Animation)
+            .SubstateOf(State.Active)
+            .Permit(Trigger.StopAnimation, State.Idle)
+            .Ignore(Trigger.StartWalking)
+            .Ignore(Trigger.StartRunning)
+            .Ignore(Trigger.StartHiding)
+            .Ignore(Trigger.StartAnimation)
+            .OnEntry(() =>
+            {
+                Debug.Log("Проигрывается анимация");
+                _triggerBuffer = null; // Очистка буфера при входе в анимацию
+            })
+            .OnExit(() =>
+            {
+                Debug.Log("Анимация завершена");
+                // При выходе из анимации если буфер заполнен - воспроизводим сохраненный триггер
+                if (_triggerBuffer.HasValue)
+                {
+                    var bufferedTrigger = _triggerBuffer.Value;
+                    _triggerBuffer = null;
+                    if (_machine.CanFire(bufferedTrigger))
+                    {
+                        _machine.Fire(bufferedTrigger);
+                    }
+                }
+            });
+
+        // Суперстейт движения
+        _machine.Configure(State.Moving)
+            .SubstateOf(State.Active)
+            .Permit(Trigger.StopMoving, State.Idle)
+            .Permit(Trigger.StartAnimation, State.Animation); // Переход в анимацию
+
+        // Idle
         _machine.Configure(State.Idle)
-            .Permit(Trigger.StartWalking, State.Walk)
-            .Permit(Trigger.StartRunning, State.Run)
-            .Permit(Trigger.PlayAnimation, State.Animating)
-            .Permit(Trigger.HidingStarted, State.Hiding);
+            .Permit(Trigger.StartWalking, State.Walking)
+            .Permit(Trigger.StartRunning, State.Running)
+            .Permit(Trigger.StartHiding, State.Hiding)
+            .Permit(Trigger.StartAnimation, State.Animation);
 
-        _machine.Configure(State.Walk)
+        // Walking под Moving
+        _machine.Configure(State.Walking)
+            .SubstateOf(State.Moving)
+            .Permit(Trigger.StartRunning, State.Running)
             .Permit(Trigger.StopMoving, State.Idle)
-            .Permit(Trigger.StartRunning, State.Run)
-            .Permit(Trigger.PlayAnimation, State.Animating)
-            .Permit(Trigger.HidingStarted, State.Hiding);
+            .Permit(Trigger.StartAnimation, State.Animation)
+            .OnEntry(() => Debug.Log("Персонаж начал ходить"))
+            .OnExit(() => Debug.Log("Персонаж перестал ходить"));
 
-        _machine.Configure(State.Run)
+        // Running под Moving
+        _machine.Configure(State.Running)
+            .SubstateOf(State.Moving)
+            .Permit(Trigger.StartWalking, State.Walking)
             .Permit(Trigger.StopMoving, State.Idle)
-            .Permit(Trigger.StartWalking, State.Walk)
-            .Permit(Trigger.PlayAnimation, State.Animating)
-            .Permit(Trigger.HidingStarted, State.Hiding);
+            .Permit(Trigger.StartAnimation, State.Animation)
+            .OnEntry(() => Debug.Log("Персонаж начал бегать"))
+            .OnExit(() => Debug.Log("Персонаж перестал бегать"));
 
-        _machine.Configure(State.Animating)
-            .Permit(Trigger.AnimationComplete, State.Idle)
-            .Permit(Trigger.HidingStarted, State.Hiding);
-
+        // Hiding под Active
         _machine.Configure(State.Hiding)
-            .Permit(Trigger.HidingEnded, State.Idle)
-            .Permit(Trigger.StartWalking, State.Walk)
-            .Permit(Trigger.StartRunning, State.Run);
+            .SubstateOf(State.Active)
+            .Permit(Trigger.StopHiding, State.Idle)
+            .Permit(Trigger.StartAnimation, State.Animation)
+            .OnEntry(() => Debug.Log("Персонаж спрятался"))
+            .OnExit(() => Debug.Log("Персонаж вышел из укрытия"));
+    }
+
+    public bool IsInState(State superState)
+    {
+        return _machine.IsInState(superState);
     }
 
     public bool TryFire(Trigger trigger)
     {
+        // Если в состоянии анимации и триггер не StopAnimation - буферизируем
+        if (_machine.State == State.Animation && trigger != Trigger.StopAnimation)
+        {
+            _triggerBuffer = trigger;
+            return false;
+        }
+
         if (_machine.CanFire(trigger))
         {
             _machine.Fire(trigger);

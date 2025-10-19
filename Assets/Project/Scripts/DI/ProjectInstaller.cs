@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameJam.Project.Infrastructure.EventBus.Subscribers;
 using GameJamLvl5.Project.Infrastructure.EventBus.Subscribers;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -41,12 +42,15 @@ public class InputServiceFactory : IFactory<InputService>
         InputService service = new(inputAsset);
 
         service.Subscribe(new("Player", "Move"),
-            (MoveHandler, InputActionType.Performed),
-            (MoveHandler, InputActionType.Canceled));
+        (MoveHandler, InputActionType.Performed),
+        (MoveHandler, InputActionType.Canceled));
+
+        service.Subscribe(new("Player", "Sprint"),
+        (SprintHandler, InputActionType.Performed),
+        (SprintHandler, InputActionType.Canceled));
 
         service.Subscribe(new("Player", "Interact"), InteractHandler, InputActionType.Performed);
         service.Subscribe(new("UI", "Submit"), NextDialogueHandler, InputActionType.Performed);
-
         return service;
 
         void MoveHandler(InputAction.CallbackContext context)
@@ -61,10 +65,17 @@ public class InputServiceFactory : IFactory<InputService>
             bus.RaiseEvent<IGameplay_InteractEventHandler>(h => h.HandleInteract(value));
         }
 
+        void SprintHandler(InputAction.CallbackContext context)
+        {
+            var value = context.ReadValueAsButton();
+            bus.RaiseEvent<IGameplay_SprintEventHandler>(h => h.HandleSprint(value));
+        }
+
         void NextDialogueHandler(InputAction.CallbackContext context)
         {
             bus.RaiseEvent<IUI_NextDialogueEventHandler>(h => h.HandleNextDialogueEvent());
         }
+
     }
 
 

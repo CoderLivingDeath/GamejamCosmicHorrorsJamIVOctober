@@ -9,12 +9,25 @@ using UnityEngine.Video;
 
 public class InteractableBehaviour : InteractableBehaviourBase
 {
-    public UnityEvent OnInteractEvent;
+    [SerializeField]
+    private int _priority = 0;
 
-    public bool CanInteract => _canInteract;
+    public int Priority => _priority;
+
+
+    public bool BoundsSupport = false;
+
+    [SerializeField]
+    private Bounds _interactionBounds;
+
+    public Bounds? InteractionBounds => _interactionBounds;
+
 
     [SerializeField]
     private bool _canInteract = true;
+
+    public UnityEvent OnInteractEvent;
+
 #if UNITY_EDITOR
     [SerializeField]
     [SelectionPopup(nameof(strs), callbackName: nameof(OnItemSelected), placeholder: "{select}")]
@@ -23,10 +36,30 @@ public class InteractableBehaviour : InteractableBehaviourBase
 
     public SelectItem[] strs => GetSelectedItems().ToArray();
 #endif
+
     public Assembly GetAssembly()
     {
         return this.GetType().Assembly;
     }
+
+    public bool CanInteractWithPosition(Vector3 interactorPosition)
+    {
+        return _canInteract && this.enabled && IsWithinInteractionBounds(interactorPosition);
+    }
+
+
+    public bool IsWithinInteractionBounds(Vector3 interactorPosition)
+    {
+        if (_interactionBounds != null && BoundsSupport)
+        {
+            // Получаем локальную позицию взаимодействующего, преобразуя из мировых координат
+            Vector3 localPos = transform.InverseTransformPoint(interactorPosition);
+
+            return _interactionBounds.Contains(localPos);
+        }
+        return true;
+    }
+
 
     private IEnumerable<Type> GetBehavioursByAttribute(Type attributeType, Assembly assembly)
     {
@@ -129,14 +162,14 @@ public class InteractableBehaviour : InteractableBehaviourBase
         }
     }
 
-    public bool CanIneract()
+    public bool CanInteract()
     {
         return _canInteract && this.enabled;
     }
 
     public override void Interact(GameObject sender)
     {
-        if (!CanIneract()) return;
+        if (!CanInteract()) return;
 
         var interactables = GetComponents<MonoInteractableHandlerBase>();
 

@@ -167,10 +167,16 @@ MonoBehaviour:
   inspectorMaxVelocity: 0.2
   BlockX: 0
   BlockY: 1
-  inspectorRadius: 3
-  inspectorMask:
+  spriteRenderer: {fileID: 0}
+  interactionOffset: {x: 0, y: 0, z: 0}
+  interactionRadius: 0
+  FindingMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
+  interactionObstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  interactionDrawGizmos: 1
   animator: {fileID: 4882973878604622102}
   unityCharacterController: {fileID: 2331179488624655105}
   body: {fileID: 0}
