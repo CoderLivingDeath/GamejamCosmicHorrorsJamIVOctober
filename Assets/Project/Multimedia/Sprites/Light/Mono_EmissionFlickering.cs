@@ -9,7 +9,7 @@ public class Mono_EmissionFlickering : MonoBehaviour
     public float maxFlicker = 0.2f; // Продолжительность вспышки
     private float timer = 0f;
     private float interval = 0f;
-    private float defaultEmission = 1.11f;
+    public float defaultEmission = 1.11f;
     private float defaultIntensity = 0.1f;
 
     void Start()

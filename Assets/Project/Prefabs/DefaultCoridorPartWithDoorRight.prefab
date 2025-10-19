@@ -664,6 +664,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 189843395467026624}
     m_Modifications:
+    - target: {fileID: 659347139741477816, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 964488924287283974, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
       propertyPath: m_SortingOrder
       value: 2
@@ -671,6 +675,10 @@ PrefabInstance:
     - target: {fileID: 964488924287283974, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
       propertyPath: m_RenderingLayerMask
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3476165657998999281, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6012635148663326757, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
       propertyPath: m_SortingOrder
@@ -743,6 +751,10 @@ PrefabInstance:
     - target: {fileID: 8637372603055522097, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
       propertyPath: m_Name
       value: DoorH
+      objectReference: {fileID: 0}
+    - target: {fileID: 8698981484841184103, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
