@@ -164,10 +164,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonoCharacterController
   _state: 0
-  inspectorMaxVelocity: 0.2
+  MovementVelocity: 0
   BlockX: 0
   BlockY: 1
-  spriteRenderer: {fileID: 0}
   interactionOffset: {x: 0, y: 0, z: 0}
   interactionRadius: 0
   FindingMask:

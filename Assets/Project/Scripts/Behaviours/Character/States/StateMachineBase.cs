@@ -133,26 +133,20 @@ public class CharacterStateMachine
             .SubstateOf(State.Moving)
             .Permit(Trigger.StartRunning, State.Running)
             .Permit(Trigger.StopMoving, State.Idle)
-            .Permit(Trigger.StartAnimation, State.Animation)
-            .OnEntry(() => Debug.Log("Персонаж начал ходить"))
-            .OnExit(() => Debug.Log("Персонаж перестал ходить"));
+            .Permit(Trigger.StartAnimation, State.Animation);
 
         // Running под Moving
         _machine.Configure(State.Running)
             .SubstateOf(State.Moving)
             .Permit(Trigger.StartWalking, State.Walking)
             .Permit(Trigger.StopMoving, State.Idle)
-            .Permit(Trigger.StartAnimation, State.Animation)
-            .OnEntry(() => Debug.Log("Персонаж начал бегать"))
-            .OnExit(() => Debug.Log("Персонаж перестал бегать"));
+            .Permit(Trigger.StartAnimation, State.Animation);
 
         // Hiding под Active
         _machine.Configure(State.Hiding)
             .SubstateOf(State.Active)
             .Permit(Trigger.StopHiding, State.Idle)
-            .Permit(Trigger.StartAnimation, State.Animation)
-            .OnEntry(() => Debug.Log("Персонаж спрятался"))
-            .OnExit(() => Debug.Log("Персонаж вышел из укрытия"));
+            .Permit(Trigger.StartAnimation, State.Animation);
     }
 
     public bool IsInState(State superState)

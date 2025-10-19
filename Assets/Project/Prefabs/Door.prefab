@@ -118,7 +118,7 @@ Transform:
   m_GameObject: {fileID: 994628639480770280}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -2}
+  m_LocalPosition: {x: 0, y: 1, z: -1.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -136,10 +136,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bd14335cf5d1348aba47a78466c8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
+  _priority: 0
+  BoundsSupport: 0
+  _interactionBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 1, y: 1, z: 1}
+  _canInteract: 0
   OnInteractEvent:
     m_PersistentCalls:
       m_Calls: []
-  _canInteract: 1
   Interaction: DoorInteractionHandler
 --- !u!114 &1161567639033111846
 MonoBehaviour:
@@ -342,10 +347,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bd14335cf5d1348aba47a78466c8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
+  _priority: 0
+  BoundsSupport: 0
+  _interactionBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  _canInteract: 1
   OnInteractEvent:
     m_PersistentCalls:
       m_Calls: []
-  _canInteract: 1
   Interaction: DoorInteractionHandler
 --- !u!114 &4978799750362022292
 MonoBehaviour:
