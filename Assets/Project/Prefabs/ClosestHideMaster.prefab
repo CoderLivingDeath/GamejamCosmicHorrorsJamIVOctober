@@ -52,88 +52,69 @@ MonoBehaviour:
   OnHideEnd:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &8659963352928508481
-GameObject:
+--- !u!1001 &5978344413815768476
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6650916597197046947}
-  - component: {fileID: 4886488279137173035}
-  - component: {fileID: 1452452627296106740}
-  - component: {fileID: 6222110971178285552}
-  m_Layer: 6
-  m_Name: INTERACTABLE IN
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6650916597197046947
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8659963352928508481}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 3048687907478567439}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4886488279137173035
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3048687907478567439}
+    m_Modifications:
+    - target: {fileID: 337269039620062316, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: monoHideInClosest
+      value: 
+      objectReference: {fileID: 4279413091983690248}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3087505997273128925, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+      propertyPath: m_Name
+      value: INTERACTABLE
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+--- !u!4 &6650916597197046947 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1061607037827285311, guid: aec7be31756f2d64cb23185023fd60c9, type: 3}
+  m_PrefabInstance: {fileID: 5978344413815768476}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8659963352928508481}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1452452627296106740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8659963352928508481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13bd14335cf5d1348aba47a78466c8eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
-  OnInteractEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  _canInteract: 1
-  Interaction: HideInClosestInteractionHandler
---- !u!114 &6222110971178285552
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8659963352928508481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2341a064eceda1546a2b7dd1b961c288, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Project.Scripts.behaviours.Interaction.InteractableHandlers.HideInClosestInteractionHandler
-  monoHideInClosest: {fileID: 4279413091983690248}

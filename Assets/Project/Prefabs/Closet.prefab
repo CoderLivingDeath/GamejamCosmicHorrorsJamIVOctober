@@ -558,6 +558,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6650916597197046947, guid: 815a4912ce005a14db6bf82a5ac62422, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.566
+      objectReference: {fileID: 0}
     - target: {fileID: 8633402374769655884, guid: 815a4912ce005a14db6bf82a5ac62422, type: 3}
       propertyPath: m_Name
       value: ClosestHideMaster
