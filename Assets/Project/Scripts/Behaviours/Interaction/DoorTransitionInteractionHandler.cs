@@ -14,6 +14,9 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         public bool NeedKey = false;
 
         [SerializeField]
+        public bool NeedPuzzle = false;
+
+        [SerializeField]
         public bool HideWall;
 
         [SerializeField]
@@ -34,6 +37,12 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         [Inject]
         private LocationController locationController;
 
+        [Inject]
+        private ViewManager viewManager;
+
+        [Inject]
+        private DoorPuzzlePopupView.Factory DoorPuzzlePopupViewfactory;
+
         public override void HandleInteract(InteractionContext context)
         {
             if (NeedKey)
@@ -43,6 +52,13 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
                     Debug.Log("Key not taked.");
                     return;
                 }
+            }
+
+            if (NeedPuzzle)
+            {
+                var ViewScope = viewManager.CreateView(DoorPuzzlePopupViewfactory);
+                ViewScope.View.ViewModel.PuzzleSolved += (s, e) => NeedPuzzle = false;
+                return;
             }
 
             MonoCharacterController monoCharacterController = context.Interactor.GetComponent<MonoCharacterController>();
@@ -85,10 +101,11 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
             {
                 if (mat.HasProperty(parameterName))
                 {
+                    // TODO: костыль с задержкой перед стартом анимации.
                     DOTween.To(() => mat.GetFloat(parameterName), x =>
                     {
                         mat.SetFloat(parameterName, x);
-                    }, targetValue, duration);
+                    }, targetValue, duration).SetDelay(duration * 2);
                 }
                 else
                 {

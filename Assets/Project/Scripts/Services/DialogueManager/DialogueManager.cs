@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine; // для Debug.LogError, если нужно
+using UnityEngine;
 
 public class DialogueManager
 {
