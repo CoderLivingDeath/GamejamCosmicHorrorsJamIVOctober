@@ -720,6 +720,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8055369667497560343, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: useBoundsBottomPivot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8055369667497560343, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: Points.Array.data[0].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8055369667497560343, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
+      propertyPath: Points.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8462993364065354914, guid: e15b2e003e16cbf4d9ff3b4023b92704, type: 3}
       propertyPath: m_SortingOrder
       value: 2
