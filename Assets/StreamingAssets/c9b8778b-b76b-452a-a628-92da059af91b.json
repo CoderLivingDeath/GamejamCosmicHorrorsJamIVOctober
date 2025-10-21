@@ -1,0 +1,16 @@
+{
+  "componentParameterSnapshots": {
+    "c9b8778b-b76b-452a-a628-92da059af91b": [
+      {
+        "gameObjectPath": "PLAYER",
+        "componentTypeName": "MonoCharacterController, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "parameterName": "value",
+        "value": {
+          "x": 55.0,
+          "y": 55.0,
+          "z": 55.0
+        }
+      }
+    ]
+  }
+}

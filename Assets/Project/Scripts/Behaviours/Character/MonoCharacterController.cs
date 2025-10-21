@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class MonoCharacterController : MonoBehaviour
 {
+    public Vector3 value;
     private MovementController _movementController;
 
     private AnimationController _animationController;
@@ -39,11 +40,14 @@ public class MonoCharacterController : MonoBehaviour
 
     public CharacterController CharacterController => _movementController.CharacterController;
     public Vector3 VelocityVector => _movementController.VelocityVector;
+
+    // TODO: перевести в состояние
     public float Velocity { get => _movementController.Velocity; set => _movementController.Velocity = value; }
     public bool IsMoving => _movementController.IsMoving;
     public bool CanMove => _movementController.CanMove;
 
     #region State Variables
+
 
     private bool isSprinting;
 

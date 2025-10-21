@@ -1,0 +1,16 @@
+{
+  "componentParameterSnapshots": {
+    "28138240-178d-4fc0-b606-9fdc39abf306": [
+      {
+        "gameObjectPath": "PLAYER",
+        "componentTypeName": "UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "parameterName": "position",
+        "value": {
+          "x": 6.55,
+          "y": 0.000100016594,
+          "z": -6.08
+        }
+      }
+    ]
+  }
+}
