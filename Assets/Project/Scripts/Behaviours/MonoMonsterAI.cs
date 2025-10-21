@@ -1,25 +1,13 @@
-using UnityEngine;
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using EditorAttributes;
 using System;
+using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Stateless;
-using Zenject;
+using UnityEngine;
 
-/// <summary>
-/// Класс управления ИИ монстра, расширяющий MonoCharacter.
-/// Использует MonoCharacterController для управления движением и анимацией.
-/// </summary>
 public class MonoMonsterAI : MonoCharacter
 {
-    private MonsterAI monsterAI;
-
-    private CancellationTokenSource _moveCancellation;
-
-    private Transform playerTransform; // Ссылка на цель для погони
-
-    private float searchDuration = 5f; // Время поиска
-    private float searchTimer;
+    private MonsterAIStateMachine monsterAI;
 
     [SerializeField]
     private MonoCharacterController monoCharacterController;
@@ -28,236 +16,341 @@ public class MonoMonsterAI : MonoCharacter
     private MonsterVisionTrigger AIVision;
 
     [SerializeField]
-    private MonsterAI.AIState aIState;
+    private MonsterAIStateMachine.AIState aIState;
 
-    private void Awake()
+    #region Corutines
+    private UniTaskCoroutine MoveToPointCorutine;
+
+    private UniTaskCoroutine<int> DelayCorutine;
+
+    private UniTaskCoroutine IdleLoopCorutine;
+
+    public async UniTask MoveToPoint(CancellationToken token = default)
     {
-        monsterAI = new MonsterAI();
+        //TODO: переработать систему пути
+        Vector3 Point = transform.position + new Vector3(UnityEngine.Random.Range(-10, 10), 0, 0);
+        float StopDistance = 1f;
 
-        if (AIVision != null)
+        while (!token.IsCancellationRequested)
         {
-            AIVision.TargetEntered += OnPlayerSpotted;
-            AIVision.TargetExited += OnPlayerLost;
+            if (Vector3.Distance(Point, transform.position) < StopDistance)
+            {
+                break;
+            }
+
+            Vector3 direction = (Point - transform.position).normalized;
+            monoCharacterController.MoveToDirection(new Vector2(direction.x, direction.z));
+
+            await UniTask.Yield(PlayerLoopTiming.Update, token);
+        }
+
+        StopMovement();
+        monsterAI.TryFire(MonsterAIStateMachine.AITrigger.GoIdle);
+    }
+
+    private async UniTask DelayTask(int milliseconds, CancellationToken token = default)
+    {
+        await UniTask.Delay(milliseconds, cancellationToken: token);
+    }
+
+    private async UniTask IdleLoopTask(CancellationToken token = default)
+    {
+        //TODO: Перерабоать поведение
+        while (!token.IsCancellationRequested)
+        {
+            await UniTask.Delay(500, cancellationToken: token);
+            int choice = UnityEngine.Random.Range(0, 3);
+            switch (choice)
+            {
+                case 0:
+                    monsterAI.TryFire(MonsterAIStateMachine.AITrigger.GoIdleWalk);
+                    //Debug.Log("Transition to IdleWalk");
+                    break;
+                case 1:
+                    monsterAI.TryFire(MonsterAIStateMachine.AITrigger.GoIdleStandTall);
+                    //Debug.Log("Transition to IdleStandTall");
+                    break;
+                case 2:
+                    await UniTask.Delay(UnityEngine.Random.Range(0, 10000), cancellationToken: token);
+                    // Debug.Log("Remain in Idle state");
+                    break;
+            }
         }
     }
 
-    private void OnDestroy()
+    #endregion
+
+    #region Unity Internal
+
+    [Space]
+    [Header("State variables")]
+    public Transform Target;
+    public float SerachDuration = 10f;
+    public float SearchTime;
+
+    void Awake()
     {
-        if (AIVision != null)
-        {
-            AIVision.TargetEntered -= OnPlayerSpotted;
-            AIVision.TargetExited -= OnPlayerLost;
-        }
+        AIVision.TargetEntered += TargetSpoted;
+        AIVision.TargetExited += TargetLost;
+        ConfigureStates();
+
+        MoveToPointCorutine = new(MoveToPoint);
+        DelayCorutine = new(DelayTask);
+        IdleLoopCorutine = new(IdleLoopTask);
+    }
+
+    void Start()
+    {
+        monsterAI.EnterState(monsterAI.CurrentState);
     }
 
     private void Update()
     {
         aIState = monsterAI.CurrentState;
-        switch (monsterAI.CurrentState)
+
+        InternalUpdate();
+    }
+
+    public void InternalUpdate()
+    {
+        switch (aIState)
         {
-            case MonsterAI.AIState.Idle:
-                StopMovement();
+            case MonsterAIStateMachine.AIState.Idle:
+                UpdateIdle();
                 break;
 
-            case MonsterAI.AIState.Search:
-                searchTimer += Time.deltaTime;
-                if (TryFindPlayer(out playerTransform))
-                {
-                    monsterAI.SpotTarget();
-                    searchTimer = 0f;
-                }
-                else if (searchTimer > searchDuration)
-                {
-                    monsterAI.SearchTimedOut();
-                    searchTimer = 0f;
-                }
-                else
-                {
-                    PatrolAround();
-                }
+            case MonsterAIStateMachine.AIState.IdleWalk:
+                UpdateIdleWalk();
                 break;
 
-            case MonsterAI.AIState.Chase:
-                if (playerTransform == null || !IsPlayerVisible(playerTransform))
-                {
-                    monsterAI.LoseTarget();
-                }
-                else
-                {
-                    ChaseTarget(playerTransform.position);
-                }
+            case MonsterAIStateMachine.AIState.IdleStandTall:
+                UpdateIdleStandTall();
+                break;
+
+            case MonsterAIStateMachine.AIState.Search:
+                UpdateSearch();
+                break;
+
+            case MonsterAIStateMachine.AIState.Chase:
+                UpdateChase();
+                break;
+
+            case MonsterAIStateMachine.AIState.Agressive:
+                UpdateAgressive();
                 break;
         }
     }
 
-
-    // Обработчики событий от обзора
-    private void OnPlayerSpotted(Transform player)
+    void OnDestroy()
     {
-        playerTransform = player;
-        monsterAI.SpotTarget();
+        MoveToPointCorutine?.Dispose();
+        DelayCorutine?.Dispose();
+        IdleLoopCorutine?.Dispose();
+    }
+    #endregion
+
+    private async void UpdateIdleWalk()
+    {
+        //Debug.Log("Updating IdleWalk state");
     }
 
-    private void OnPlayerLost(Transform player)
+    // Обновление для IdleWalk
+    private void UpdateIdleStandTall()
     {
-        playerTransform = null;
-        monsterAI.LoseTarget();
+        //Debug.Log("Updating StandTall state");
+        // Логика обновления для легкой ходьбы бездействия
     }
 
-
-    private bool TryFindPlayer(out Transform player)
+    private void UpdateIdle()
     {
-        // Реализуйте кастомную логику поиска игрока, если нужно
-        player = null;
-        return false;
+        //Debug.Log("Updating Idle state");
+        // Логика Idle
+    }
+    private void UpdateChase()
+    {
+        // Debug.Log("Updating Chase state");
+
+        var direction = Target.position - transform.position;
+        monoCharacterController.MoveToDirection(direction.normalized);
     }
 
-
-    private bool IsPlayerVisible(Transform player)
+    private void UpdateAgressive()
     {
-        return true;
+        // Debug.Log("Updating Agressive state");
+        // Логика Agressive
     }
 
+    private float RotateInterval = 1.5f; // Период поворота в секундах
+    private float RotateTimer = 0f;
+    private bool RotateRightNext = true;
 
-    private void PatrolAround()
+    private void UpdateSearch()
     {
-        SetMoveDirection(UnityEngine.Random.insideUnitCircle.normalized);
-    }
+        // Debug.Log("Updating Search state");
 
+        SearchTime += Time.deltaTime;
+        RotateTimer += Time.deltaTime;
 
-    private void ChaseTarget(Vector3 targetPos)
-    {
-
-        Vector3 direction = targetPos - transform.position;
-        direction.y = 0; // Игнорируем ось Y для движения по земле
-
-        Vector2 moveDir = new Vector2(direction.x, direction.z).normalized;
-        monoCharacterController.MoveToDirection(moveDir);
-    }
-
-    /// <summary>
-    /// Устанавливает направление движения монстра через MonoCharacterController.
-    /// </summary>
-    /// <param name="direction">Направление движения в 2D (X,Z).</param>
-    public void SetMoveDirection(Vector2 direction)
-    {
-        CancelMoveToPoint();
-        monoCharacterController.MoveToDirection(direction);
-    }
-
-
-    /// <summary>
-    /// Останавливает движение монстра.
-    /// </summary>
-    public void StopMovement()
-    {
-        CancelMoveToPoint();
-        monoCharacterController.MoveToDirection(Vector2.zero);
-    }
-
-
-    /// <summary>
-    /// Проигрывает анимацию по ключу.
-    /// </summary>
-    /// <param name="animationKey">Ключ анимации.</param>
-    public void PlayAnimation(string animationKey)
-    {
-        monoCharacterController.PlayAnimation(animationKey);
-    }
-
-
-    /// <summary>
-    /// Выполняет взаимодействие с ближайшим интерактивным объектом.
-    /// </summary>
-    public void Interact()
-    {
-        monoCharacterController.Interact();
-    }
-
-
-    /// <summary>
-    /// Асинхронное перемещение к целевой точке с возможностью отмены.
-    /// </summary>
-    /// <param name="targetPoint">Целевая позиция в мире.</param>
-    /// <param name="stopDistance">Расстояние остановки от точки (по умолчанию 0.1f).</param>
-    public async UniTask MoveToPointAsync(Vector3 targetPoint, float stopDistance = 0.1f)
-    {
-        CancelMoveToPoint();
-        _moveCancellation = new CancellationTokenSource();
-        var token = _moveCancellation.Token;
-
-        try
+        if (RotateTimer >= RotateInterval)
         {
-            while (!token.IsCancellationRequested)
+            if (RotateRightNext)
+                monoCharacterController.RotateRight();
+            else
+                monoCharacterController.RotateLeft();
+
+            RotateRightNext = !RotateRightNext;
+            RotateTimer = 0f;
+        }
+
+        if (SearchTime >= SerachDuration)
+        {
+            SearchTimeout();
+            SearchTime = 0f;
+        }
+    }
+
+    private void SearchTimeout()
+    {
+        // Debug.Log("Search timed out");
+        monsterAI.TryFire(MonsterAIStateMachine.AITrigger.SearchTimeout);
+    }
+
+    private void TargetSpoted(Transform target)
+    {
+        // Debug.Log($"TargetSpoted: {target.name}");
+        Target = target;
+        monsterAI.TryFire(MonsterAIStateMachine.AITrigger.TargetSpotted);
+    }
+
+    private void TargetLost(Transform target)
+    {
+        // Debug.Log($"TargetLost: {target.name}");
+        Target = null;
+        monsterAI.TryFire(MonsterAIStateMachine.AITrigger.LostTarget);
+    }
+
+    private void StopMovement()
+    {
+        monoCharacterController.MoveToDirection(Vector3.zero);
+    }
+
+    private void ConfigureStates()
+    {
+        monsterAI = new();
+        // Обработчики для Idle
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.Idle,
+            onEnter: () =>
             {
-                Vector3 direction = (targetPoint - transform.position);
-                direction.y = 0;
+                // Debug.Log("Entered Idle state");
 
-                float distance = direction.magnitude;
-                if (distance <= stopDistance)
-                {
-                    StopMovement();
-                    break;
-                }
+                IdleLoopCorutine.Run();
+            },
+            onExit: () =>
+            {
+                // Debug.Log("Exited Idle state");
+                // Дополнительная логика при выходе из Idle
 
-                Vector2 moveDir = new Vector2(direction.x, direction.z).normalized;
-                SetMoveDirection(moveDir);
-
-                await UniTask.Yield(PlayerLoopTiming.Update, token);
+                IdleLoopCorutine.Stop();
             }
-        }
-        catch (OperationCanceledException)
-        {
-            StopMovement();
-        }
-        finally
-        {
-            _moveCancellation.Dispose();
-            _moveCancellation = null;
-        }
-    }
+        );
 
 
-    /// <summary>
-    /// Отмена текущего перемещения к точке.
-    /// </summary>
-    public void CancelMoveToPoint()
-    {
-        if (_moveCancellation != null && !_moveCancellation.IsCancellationRequested)
-        {
-            _moveCancellation.Cancel();
-        }
-    }
+        // Обработчики для IdleWalk
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.IdleWalk,
+            onEnter: () =>
+            {
+                // Debug.Log("Entered IdleWalk state");
+                // Логика при входе в IdleWalk\
 
+                if (MoveToPointCorutine.IsRunning)
+                    MoveToPointCorutine.Stop();
 
-    [Button]
-    public void Fire(int id)
-    {
-        switch (id)
-        {
-            case 0:
-                monsterAI.TryFire(MonsterAI.AITrigger.StartSearching);
-                break;
-            case 1:
-                monsterAI.TryFire(MonsterAI.AITrigger.TargetSpotted);
-                break;
-            case 2:
-                monsterAI.TryFire(MonsterAI.AITrigger.LostTarget);
-                break;
-            case 3:
-                monsterAI.TryFire(MonsterAI.AITrigger.SearchTimeout);
-                break;
-        }
+                MoveToPointCorutine.Run();
+            },
+            onExit: () =>
+            {
+                // Debug.Log("Exited IdleWalk state");
+                // Логика при выходе из IdleWalk
+                MoveToPointCorutine.Stop();
+            }
+        );
+
+        // Обработчики для IdleStandTall
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.IdleStandTall,
+            onEnter: () =>
+            {
+                // Debug.Log("Entered IdleStandTall state");
+                // Дополнительная логика при входе в IdleStandTall
+
+                DelayCorutine.RunAsync(5000).ContinueWith(() => monsterAI.TryFire(MonsterAIStateMachine.AITrigger.GoIdle)).Forget();
+            },
+            onExit: () =>
+            {
+                // Debug.Log("Exited IdleStandTall state");
+                // Дополнительная логика при выходе из IdleStandTall
+                DelayCorutine.Stop();
+            }
+        );
+
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.Search,
+            onEnter: () =>
+            {
+                // Логика при входе в Search
+                // Debug.Log("Entered Search state");
+            },
+            onExit: () =>
+            {
+                // Логика при выходе из Search
+                // Debug.Log("Exited Search state");
+
+                SearchTime = 0f;
+            }
+        );
+
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.Chase,
+            onEnter: () =>
+            {
+                // Логика при входе в Chase
+                // Debug.Log("Entered Chase state");
+            },
+            onExit: () =>
+            {
+                StopMovement();
+                // Debug.Log("Exited Chase state");
+            }
+        );
+
+        monsterAI.Subscribe(
+            MonsterAIStateMachine.AIState.Agressive,
+            onEnter: () =>
+            {
+                // Логика при входе в Agressive
+                // Debug.Log("Entered Agressive state");
+            },
+            onExit: () =>
+            {
+                // Логика при выходе из Agressive
+                // Debug.Log("Exited Agressive state");
+            }
+        );
     }
 }
 
-public class MonsterAI
+public class MonsterAIStateMachine
 {
     public enum AIState
     {
         Idle,
+        IdleStandTall, // TODO: для этого состояния нужны анимации
+        IdleWalk,
         Search,
-        Chase
+        Chase,
+        Agressive, // TODO: нужно состояние атаки
     }
 
     public enum AITrigger
@@ -265,85 +358,105 @@ public class MonsterAI
         StartSearching,
         TargetSpotted,
         LostTarget,
-        SearchTimeout
+        SearchTimeout,
+        Agressive,
+        GoIdleWalk,
+        GoIdleStandTall,
+        GoIdle,
     }
 
     private readonly StateMachine<AIState, AITrigger> _stateMachine;
+    private readonly Dictionary<AIState, StateHandler<AIState>> _handlers = new();
+    public event Action<AIState> StateChanged;
 
-    public MonsterAI()
+    public MonsterAIStateMachine()
     {
         _stateMachine = new StateMachine<AIState, AITrigger>(AIState.Idle);
 
-        _stateMachine.Configure(AIState.Idle)
-          .Permit(AITrigger.StartSearching, AIState.Search)
-          .Permit(AITrigger.TargetSpotted, AIState.Chase)
-          .OnEntry(() => OnIdleEnter());
+        _stateMachine.OnTransitioned(t =>
+        {
+            ExitState(t.Source);
+            EnterState(t.Destination);
+            StateChanged?.Invoke(t.Destination);
+        });
 
-        _stateMachine.Configure(AIState.Search)
+        _stateMachine
+            .Configure(AIState.Idle)
+            .Permit(AITrigger.GoIdleWalk, AIState.IdleWalk)
+            .Permit(AITrigger.GoIdleStandTall, AIState.IdleStandTall)
+            .Permit(AITrigger.StartSearching, AIState.Search)
             .Permit(AITrigger.TargetSpotted, AIState.Chase)
+            .Permit(AITrigger.Agressive, AIState.Agressive);
+
+        _stateMachine.Configure(AIState.IdleWalk)
+        .SubstateOf(AIState.Idle)
+        .Permit(AITrigger.GoIdle, AIState.Idle);
+
+        _stateMachine.Configure(AIState.IdleStandTall)
+        .SubstateOf(AIState.Idle)
+        .Permit(AITrigger.GoIdle, AIState.Idle);
+
+        _stateMachine
+            .Configure(AIState.Search)
             .Permit(AITrigger.SearchTimeout, AIState.Idle)
-            .Permit(AITrigger.LostTarget, AIState.Idle)  // Добавлено разрешение для LostTarget
-            .OnEntry(() => OnSearchEnter());
+            .Permit(AITrigger.TargetSpotted, AIState.Chase)
+            .Permit(AITrigger.LostTarget, AIState.Idle)
+            .Permit(AITrigger.Agressive, AIState.Agressive);
 
+        _stateMachine.Configure(AIState.Agressive).Permit(AITrigger.LostTarget, AIState.Search);
 
-        _stateMachine.Configure(AIState.Chase)
-          .Permit(AITrigger.LostTarget, AIState.Search)
-          .OnEntry(() => OnChaseEnter());
+        _stateMachine
+            .Configure(AIState.Chase)
+            .SubstateOf(AIState.Agressive)
+            .Permit(AITrigger.LostTarget, AIState.Search)
+            .Permit(AITrigger.Agressive, AIState.Agressive);
     }
 
-    public AIState CurrentState => _stateMachine.State;
+    public void Subscribe(AIState state, Action onEnter, Action onExit)
+    {
+        if (!_handlers.ContainsKey(state))
+        {
+            _handlers[state] = new StateHandler<AIState>();
+        }
+        _handlers[state].OnEnter = onEnter;
+        _handlers[state].OnExit = onExit;
+    }
 
-    // Методы вызова триггеров
-    public void StartSearching() => _stateMachine.Fire(AITrigger.StartSearching);
-    public void SpotTarget() => _stateMachine.Fire(AITrigger.TargetSpotted);
-    public void LoseTarget() => _stateMachine.Fire(AITrigger.LostTarget);
-    public void SearchTimedOut() => _stateMachine.Fire(AITrigger.SearchTimeout);
+    public void EnterState(AIState state)
+    {
+        if (_handlers.TryGetValue(state, out var handler))
+        {
+            handler.Enter();
+        }
+    }
+
+    public void ExitState(AIState state)
+    {
+        if (_handlers.TryGetValue(state, out var handler))
+        {
+            handler.Exit();
+        }
+    }
+
+    public bool IsInState(AIState state)
+    {
+        return _stateMachine.IsInState(state);
+    }
+
+    private readonly object _tryFireLock = new object();
 
     public bool TryFire(AITrigger trigger)
     {
-        if (_stateMachine.CanFire(trigger))
+        lock (_tryFireLock)
         {
-            _stateMachine.Fire(trigger);
-            return true;
+            if (_stateMachine.CanFire(trigger))
+            {
+                _stateMachine.Fire(trigger);
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
-    // Колбеки при входе в состояние
-    private void OnIdleEnter()
-    {
-        // Логика для бездействия
-    }
-
-    private void OnSearchEnter()
-    {
-        // Логика для поиска
-    }
-
-    private void OnChaseEnter()
-    {
-        // Логика для погони
-    }
-}
-
-public class MonoMonsterAIFactory
-{
-    private readonly DiContainer _container;
-    private readonly GameObject _monsterAIPrefab;
-    
-    public MonoMonsterAIFactory(DiContainer container)
-    {
-        _container = container;
-    }
-
-    public MonoMonsterAI Create(Vector3 position, Transform parent)
-    {
-        // Инстанциируем объект из префаба под нужным родителем и позицией
-        GameObject monsterGO = _container.InstantiatePrefab(_monsterAIPrefab, position, Quaternion.identity, parent);
-        
-        // Получаем компонент MonoMonsterAI
-        MonoMonsterAI monsterAI = monsterGO.GetComponent<MonoMonsterAI>();
-
-        return monsterAI;
-    }
+    public AIState CurrentState => _stateMachine.State;
 }

@@ -13,7 +13,7 @@ public class CharacterStateMachine
         Walking,
         Running,
         Hiding,
-        Animation
+        Animation,
     }
 
     public enum Trigger
@@ -25,7 +25,7 @@ public class CharacterStateMachine
         StopHiding,
         StartAnimation,
         StopAnimation,
-        DoNothing
+        DoNothing,
     }
 
     private readonly StateMachine<State, Trigger> _machine;
@@ -84,11 +84,12 @@ public class CharacterStateMachine
     {
         // Активное состояние персонажа
         _machine.Configure(State.Active);
-            // .OnEntry(() => Debug.Log("Персонаж активен"))
-            // .OnExit(() => Debug.Log("Персонаж неактивен"));
+        // .OnEntry(() => Debug.Log("Персонаж активен"))
+        // .OnExit(() => Debug.Log("Персонаж неактивен"));
 
         // Состояние анимации (блокирует другие действия)
-        _machine.Configure(State.Animation)
+        _machine
+            .Configure(State.Animation)
             .SubstateOf(State.Active)
             .Permit(Trigger.StopAnimation, State.Idle)
             .Ignore(Trigger.StartWalking)
@@ -116,34 +117,39 @@ public class CharacterStateMachine
             });
 
         // Суперстейт движения
-        _machine.Configure(State.Moving)
+        _machine
+            .Configure(State.Moving)
             .SubstateOf(State.Active)
             .Permit(Trigger.StopMoving, State.Idle)
             .Permit(Trigger.StartAnimation, State.Animation); // Переход в анимацию
 
         // Idle
-        _machine.Configure(State.Idle)
+        _machine
+            .Configure(State.Idle)
             .Permit(Trigger.StartWalking, State.Walking)
             .Permit(Trigger.StartRunning, State.Running)
             .Permit(Trigger.StartHiding, State.Hiding)
             .Permit(Trigger.StartAnimation, State.Animation);
 
         // Walking под Moving
-        _machine.Configure(State.Walking)
+        _machine
+            .Configure(State.Walking)
             .SubstateOf(State.Moving)
             .Permit(Trigger.StartRunning, State.Running)
             .Permit(Trigger.StopMoving, State.Idle)
             .Permit(Trigger.StartAnimation, State.Animation);
 
         // Running под Moving
-        _machine.Configure(State.Running)
+        _machine
+            .Configure(State.Running)
             .SubstateOf(State.Moving)
             .Permit(Trigger.StartWalking, State.Walking)
             .Permit(Trigger.StopMoving, State.Idle)
             .Permit(Trigger.StartAnimation, State.Animation);
 
         // Hiding под Active
-        _machine.Configure(State.Hiding)
+        _machine
+            .Configure(State.Hiding)
             .SubstateOf(State.Active)
             .Permit(Trigger.StopHiding, State.Idle)
             .Permit(Trigger.StartAnimation, State.Animation);
@@ -178,5 +184,6 @@ public class StateHandler<TState>
     public Action OnExit { get; set; }
 
     public void Enter() => OnEnter?.Invoke();
+
     public void Exit() => OnExit?.Invoke();
 }
