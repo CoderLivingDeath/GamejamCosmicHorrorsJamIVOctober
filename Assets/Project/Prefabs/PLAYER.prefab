@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 7465185830246677430}
   - component: {fileID: 1975342624967200037}
   - component: {fileID: 7223589123827102579}
+  - component: {fileID: 2265399289976833568}
   m_Layer: 3
   m_Name: PLAYER
   m_TagString: Player
@@ -456,7 +457,7 @@ MonoBehaviour:
   _state: 0
   MovementVelocity: 0.2
   BlockX: 0
-  BlockY: 0
+  BlockY: 1
   interactionOffset: {x: 0, y: 1, z: 0}
   interactionRadius: 1
   FindingMask:
@@ -469,6 +470,18 @@ MonoBehaviour:
   animator: {fileID: 8847997846568232985}
   unityCharacterController: {fileID: 1975342624967200037}
   body: {fileID: 536200548393938157}
+--- !u!114 &2265399289976833568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7844810448443934840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05aed9c9998f2f440abd41b1884c65f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerPrefsViewer
 --- !u!1 &8227684555012225924
 GameObject:
   m_ObjectHideFlags: 0

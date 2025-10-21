@@ -230,7 +230,7 @@ Transform:
   m_GameObject: {fileID: 1979472008365760830}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 2}
+  m_LocalPosition: {x: 0, y: 1, z: 1.819}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -248,10 +248,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bd14335cf5d1348aba47a78466c8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
+  _priority: 0
+  BoundsSupport: 0
+  _interactionBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  _canInteract: 1
   OnInteractEvent:
     m_PersistentCalls:
       m_Calls: []
-  _canInteract: 1
   Interaction: DoorInteractionHandler
 --- !u!114 &2992474223728158635
 MonoBehaviour:
@@ -445,7 +450,7 @@ Transform:
   m_GameObject: {fileID: 3515865980361007943}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -593,7 +598,7 @@ Transform:
   m_GameObject: {fileID: 4844509681165662480}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -2}
+  m_LocalPosition: {x: -0, y: 1, z: -0.793}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -611,10 +616,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bd14335cf5d1348aba47a78466c8eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
+  _priority: 0
+  BoundsSupport: 0
+  _interactionBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  _canInteract: 1
   OnInteractEvent:
     m_PersistentCalls:
       m_Calls: []
-  _canInteract: 1
   Interaction: DoorInteractionHandler
 --- !u!114 &8396640151789411808
 MonoBehaviour:

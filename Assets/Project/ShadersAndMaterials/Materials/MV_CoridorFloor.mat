@@ -27,7 +27,7 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.0716228, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.0716204, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5850922316758341918

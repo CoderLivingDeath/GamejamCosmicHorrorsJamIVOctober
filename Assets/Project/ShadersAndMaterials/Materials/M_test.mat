@@ -21,15 +21,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_test
-  m_Shader: {fileID: -6465566751694194690, guid: 9b5749bec6972034a92fae899fb7d3d1, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 7b723292e05758c46baf01df73b7e6d0, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2450
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
@@ -45,6 +46,22 @@ Material:
         m_Texture: {fileID: 2800000, guid: 867a8a356f123ca4aa7bb6abfa69ba6e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _InterpBump:
         m_Texture: {fileID: 2800000, guid: 17429655b4abfd24380749c19d18721f, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -55,6 +72,18 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 8f86862037725d54e991df4b7b1d28f1, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SecInterpBump:
@@ -83,12 +112,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 1
+    - _Alpha: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _Blending: 0.843
+    - _BumpScale: 1
     - _CChangeGrad: 0
     - _CChangeHeight: 0
     - _CChangePenGrad: 0
@@ -96,15 +126,22 @@ Material:
     - _CChangePenWidth: 0.0887959
     - _CastShadows: 1
     - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _GlossMapScale: 1
     - _Glossiness: 0.506
+    - _GlossyReflections: 1
     - _IntBlend: 0.322
     - _IntPosInf: 1
     - _MaxNoise: 0.19299755
     - _Metallic: 0.536
     - _MinNoise: 0.19099757
+    - _Mode: 0
     - _NoiseBumpStrength: 1
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -113,16 +150,21 @@ Material:
     - _SmoothEnd: 0.089666665
     - _SmoothSmooth: 0
     - _SmoothStart: 0.089666665
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _UVSec: 0
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.16075248, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.16060695, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Cos: {r: 1, g: 1, b: 1, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _IntClampPos: {r: 83.3, g: 2, b: 10.16, a: 0}
     - _IntClampWidth: {r: 43.6, g: 5.2, b: 12.89, a: 0}
     - _IntOffsetFactor: {r: 0, g: 0, b: 0, a: 0}
