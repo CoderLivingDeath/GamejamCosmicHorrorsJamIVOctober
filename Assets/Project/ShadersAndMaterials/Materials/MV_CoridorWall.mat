@@ -38,7 +38,7 @@ Material:
     - _NoiseBumpStrength: 1
     - _QueueControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.07639479, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.07614157, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5440262318620380918

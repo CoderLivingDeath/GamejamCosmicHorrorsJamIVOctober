@@ -7,6 +7,7 @@ using EditorAttributes;
 using System.Threading.Tasks;
 using System.IO;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using Zenject;
 
 public class MonoDoorTransition : MonoBehaviour
@@ -79,6 +80,6 @@ public sealed class DoorTransitionAnomationWithCharacter : IScriptableAnimation<
 
         DoorClose.Run(token).Forget();
 
-        animator.SetTrigger(NextKey);
+        // animator.SetTrigger(NextKey); // TODO: проблема, ломается перснаж если держать кнопку передвижения во время и после прохода через дверь
     }
 }

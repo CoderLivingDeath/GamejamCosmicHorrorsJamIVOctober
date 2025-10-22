@@ -34,6 +34,12 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         [SerializeField]
         private string[] PrevId;
 
+        [SerializeField]
+        private GameObject Lamp;
+
+        [SerializeField]
+        private Material MaterialOpen;
+
         [Inject]
         private LocationController locationController;
 
@@ -52,12 +58,20 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
                     Debug.Log("Key not taked.");
                     return;
                 }
+                if (Lamp)
+                {
+                    Lamp.GetComponent<SpriteRenderer>().material = MaterialOpen;
+                }
             }
 
             if (NeedPuzzle)
             {
                 var ViewScope = viewManager.CreateView(DoorPuzzlePopupViewfactory);
                 ViewScope.View.ViewModel.PuzzleSolved += (s, e) => NeedPuzzle = false;
+                if (Lamp)
+                {
+                    ViewScope.View.ViewModel.PuzzleSolved += (s, e) => Lamp.GetComponent<SpriteRenderer>().material = MaterialOpen;
+                }
                 return;
             }
 
@@ -70,9 +84,13 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
 
             var wallMaterial = locationController.locationSettings.WallMaterial;
             var doorMaterial = locationController.locationSettings.DoorMaterial;
+            var lampMaterial = locationController.locationSettings.DoorLampMasterMaterial;
 
             var MinDoorAlpha = locationController.locationSettings.MinDoorAlpha;
             var MaxDoorAlpha = locationController.locationSettings.MaxDoorAlpha;
+
+            var MinLampEmission = locationController.locationSettings.MinDoorAlpha;
+            var MaxDoorEmission = locationController.locationSettings.MaxDoorAlpha;
 
             var MinWallAlpha = locationController.locationSettings.MinWallAlpha;
             var MaxWallAlpha = locationController.locationSettings.MaxWallAlpha;
@@ -91,10 +109,14 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
             if (HideDoor)
             {
                 AnimateShaderFloatParameter(doorMaterial, "_Alpha", MinDoorAlpha, duration);
+                AnimateShaderFloatParameter(lampMaterial, "_Alpha", MinDoorAlpha, duration);
+                AnimateShaderFloatParameter(lampMaterial, "_GlowIntensity", MinDoorAlpha, duration);
             }
             else
             {
                 AnimateShaderFloatParameter(doorMaterial, "_Alpha", MaxDoorAlpha, duration);
+                AnimateShaderFloatParameter(lampMaterial, "_Alpha", MaxDoorAlpha, duration);
+                AnimateShaderFloatParameter(lampMaterial, "_GlowIntensity", MaxDoorAlpha, duration);
             }
 
             void AnimateShaderFloatParameter(Material mat, string parameterName, float targetValue, float duration)
