@@ -19,6 +19,8 @@ public class MonoCharacterController : MonoBehaviour
 
     private Vector3 _lastMovementVector = Vector3.zero;
 
+    private float _savedScaleX;
+
     public Vector3 LastMovementVector => _lastMovementVector;
 
     public Animator Animator => _animationController.Animator;
@@ -32,18 +34,29 @@ public class MonoCharacterController : MonoBehaviour
     public InteractionController InteractionController => _interactionController;
 
     public IUniTaskCoroutine MovementCoroutine => _movementController.MovementCoroutine;
-    public IUniTaskCoroutine DirectionMonitoringCoroutine => _movementController.DirectionMonitoringCoroutine;
-    public IUniTaskCoroutine IsMovingMonitoringCoroutine => _movementController.IsMovingMonitoringCoroutine;
+    public IUniTaskCoroutine DirectionMonitoringCoroutine =>
+        _movementController.DirectionMonitoringCoroutine;
+    public IUniTaskCoroutine IsMovingMonitoringCoroutine =>
+        _movementController.IsMovingMonitoringCoroutine;
 
     public bool IsAnimating => _animationController.IsAnimating;
 
     public CharacterController CharacterController => _movementController.CharacterController;
+
+    [Obsolete]
     public Vector3 VelocityVector => _movementController.VelocityVector;
-    public float Velocity { get => _movementController.Velocity; set => _movementController.Velocity = value; }
+
+    // TODO: перевести в состояние
+    public float Velocity
+    {
+        get => _movementController.Velocity;
+        set => _movementController.Velocity = value;
+    }
     public bool IsMoving => _movementController.IsMoving;
     public bool CanMove => _movementController.CanMove;
 
     #region State Variables
+
 
     private bool isSprinting;
 
@@ -71,77 +84,74 @@ public class MonoCharacterController : MonoBehaviour
 
     private void Configure()
     {
-        _stateMachine.Subscribe(CharacterStateMachine.State.Moving,
-        () =>
-        {
+        _stateMachine.Subscribe(CharacterStateMachine.State.Moving, () => { }, () => { });
 
-        },
-        () =>
-        {
+        _stateMachine.Subscribe(
+            CharacterStateMachine.State.Idle,
+            () =>
+            {
+                animator.SetTrigger("Idle");
+            },
+            () => { }
+        );
 
-        });
+        _stateMachine.Subscribe(
+            CharacterStateMachine.State.Walking,
+            () =>
+            {
+                Velocity = 0.1f;
+                animator.SetTrigger("Walk");
+            },
+            () => { }
+        );
 
-        _stateMachine.Subscribe(CharacterStateMachine.State.Idle,
-        () =>
-        {
-            animator.SetTrigger("Idle");
-        },
-        () =>
-        {
+        _stateMachine.Subscribe(
+            CharacterStateMachine.State.Running,
+            () =>
+            {
+                Velocity = 0.2f;
+                animator.SetTrigger("Run");
+            },
+            () =>
+            {
+                Velocity = 0.1f;
+            }
+        );
 
-        });
+        _stateMachine.Subscribe(
+            CharacterStateMachine.State.Animation,
+            () => _movementController.Disable(),
+            () =>
+            {
+                _movementController.Enable();
+                UpdateMoveState(isMove, isSprinting);
+            }
+        );
 
-        _stateMachine.Subscribe(CharacterStateMachine.State.Walking,
-        () =>
-        {
-            Velocity = 0.1f;
-            animator.SetTrigger("Walk");
-        },
-        () =>
-        {
-
-        });
-
-        _stateMachine.Subscribe(CharacterStateMachine.State.Running,
-        () =>
-        {
-            Velocity = 0.2f;
-            animator.SetTrigger("Run");
-        },
-        () =>
-        {
-            Velocity = 0.1f;
-        });
-
-        _stateMachine.Subscribe(CharacterStateMachine.State.Animation,
-        () => _movementController.Disable(),
-        () =>
-        {
-            _movementController.Enable();
-            UpdateMoveState(isMove, isSprinting);
-        });
-
-        _stateMachine.Subscribe(CharacterStateMachine.State.Hiding,
-        () =>
-        {
-            body.SetActive(false);
-            unityCharacterController.enabled = false;
-            _movementController.Disable();
-            _interactionController.Disable();
-        },
-        () =>
-        {
-            body.SetActive(true);
-            unityCharacterController.enabled = true;
-            _movementController.Enable();
-            _interactionController.Enable();
-        });
+        _stateMachine.Subscribe(
+            CharacterStateMachine.State.Hiding,
+            () =>
+            {
+                body.SetActive(false);
+                unityCharacterController.enabled = false;
+                _movementController.Disable();
+                _interactionController.Disable();
+            },
+            () =>
+            {
+                body.SetActive(true);
+                unityCharacterController.enabled = true;
+                _movementController.Enable();
+                _interactionController.Enable();
+            }
+        );
     }
 
     #region Unity internal
 
     [Header("States")]
-    [SerializeField] private CharacterStateMachine.State _state;
+    [SerializeField]
+    private CharacterStateMachine.State _state;
 
     [Button]
     private void Fire(int trigger)
@@ -151,28 +161,45 @@ public class MonoCharacterController : MonoBehaviour
 
     [Header("Movement Settings")]
     [InspectorName("Velocity")]
-    [SerializeField] private float MovementVelocity;
-    [SerializeField] private bool BlockX;
-    [SerializeField] private bool BlockY;
+    [SerializeField]
+    private float MovementVelocity;
+
+    [SerializeField]
+    private bool BlockX;
+
+    [SerializeField]
+    private bool BlockY;
 
     [Header("Interaction Settings")]
-    [SerializeField] private Vector3 interactionOffset;
-    [SerializeField] private float interactionRadius;
-    [SerializeField] private LayerMask FindingMask;
-    [SerializeField] private LayerMask interactionObstacleLayerMask;
+    [SerializeField]
+    private Vector3 interactionOffset;
+
+    [SerializeField]
+    private float interactionRadius;
+
+    [SerializeField]
+    private LayerMask FindingMask;
+
+    [SerializeField]
+    private LayerMask interactionObstacleLayerMask;
 
     [InspectorName("Draw Gizmos")]
     [SerializeField]
     private bool interactionDrawGizmos = true;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
+    [SerializeField]
+    private Animator animator;
 
     [Space]
-    [SerializeField] private CharacterController unityCharacterController;
-    [SerializeField] private Dictionary<string, IScriptableAnimation> animationLibrary;
+    [SerializeField]
+    private CharacterController unityCharacterController;
 
-    [SerializeField] private GameObject body;
+    [SerializeField]
+    private Dictionary<string, IScriptableAnimation> animationLibrary;
+
+    [SerializeField]
+    private GameObject body;
 
     private void Awake()
     {
@@ -227,7 +254,11 @@ public class MonoCharacterController : MonoBehaviour
         _movementController?.Enable();
         _interactionController?.Enable();
 
-        _movementController.OnPositionChanged += (pos) => _interactionController.UpdateInteractables(pos + interactionOffset, obstacleLayerMask: interactionObstacleLayerMask);
+        _movementController.OnPositionChanged += (pos) =>
+            _interactionController.UpdateInteractables(
+                pos + interactionOffset,
+                obstacleLayerMask: interactionObstacleLayerMask
+            );
     }
 
     private void OnDisable()
@@ -243,14 +274,32 @@ public class MonoCharacterController : MonoBehaviour
     }
     #endregion
 
+    public void RotateRight()
+    {
+        Vector3 scale = body.transform.localScale;
+        scale.x = Math.Abs(scale.x);
+        body.transform.localScale = scale;
+        _savedScaleX = scale.x;
+    }
+
+    public void RotateLeft()
+    {
+        Vector3 scale = body.transform.localScale;
+        scale.x = -Math.Abs(scale.x);
+        body.transform.localScale = scale;
+        _savedScaleX = scale.x;
+    }
+
     private void UpdateScaleByMovementVector(Vector3 movementVector)
     {
         if (movementVector == Vector3.zero)
             return;
 
-        Vector3 scale = body.transform.localScale;
-        scale.x = movementVector.x < 0 ? -Mathf.Abs(scale.x) : Mathf.Abs(scale.x);
-        body.transform.localScale = scale;
+        if (movementVector.x > 0)
+            RotateRight();
+        else if (movementVector.x < 0)
+            RotateLeft();
+        // Если движение по X отсутствует (0), поворот не меняется
     }
 
     private void UpdateMoveState(bool isMoving, bool isSprinting)
@@ -276,8 +325,10 @@ public class MonoCharacterController : MonoBehaviour
 
     public void MoveToDirection(Vector2 direction)
     {
-        if (BlockX) direction.x = 0;
-        if (BlockY) direction.y = 0;
+        if (BlockX)
+            direction.x = 0;
+        if (BlockY)
+            direction.y = 0;
 
         _movementController.MoveToDirection(direction);
 
@@ -311,9 +362,10 @@ public class MonoCharacterController : MonoBehaviour
         _interactionController.Interact();
     }
 
-    public void InteractWith(InteractableBehaviour interactable)
+    public void InteractWith(MonoInteractable interactable)
     {
-        if (interactable == null) throw new ArgumentNullException();
+        if (interactable == null)
+            throw new ArgumentNullException();
 
         _interactionController.InteractWith(interactable);
     }
@@ -328,8 +380,10 @@ public class MonoCharacterController : MonoBehaviour
         var scope = _animationController.PlayAnimation(animation);
         if (scope != null)
         {
-            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
-            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
+            scope.OnStart += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
+            scope.Completed += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
             scope.Start();
         }
 
@@ -341,47 +395,65 @@ public class MonoCharacterController : MonoBehaviour
         var scope = _animationController.PlayAnimation(key);
         if (scope != null)
         {
-            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
-            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
+            scope.OnStart += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
+            scope.Completed += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
             scope.Start();
         }
 
         return scope;
     }
 
-    public IScriptableAnimationScope PlayerAnimationWithTransform(IScriptableAnimation<Transform> animation, bool @override = false)
+    public IScriptableAnimationScope PlayerAnimationWithTransform(
+        IScriptableAnimation<Transform> animation,
+        bool @override = false
+    )
     {
-        if (@override == false && _animationController.IsAnimating) throw new Exception("In animating.");
+        if (@override == false && _animationController.IsAnimating)
+            throw new Exception("In animating.");
 
         var wrapper = new SciptableAnimationWrapper<Transform>(animation, this.transform);
         var scope = _animationController.PlayAnimation(wrapper, @override);
         if (scope != null)
         {
-            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
-            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
+            scope.OnStart += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
+            scope.Completed += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
             scope.Start();
         }
 
         return scope;
     }
 
-    public IScriptableAnimationScope PlayerAnimationWithAnimatorAndTransform(IScriptableAnimation<(Animator, Transform)> animation, bool @override = false)
+    public IScriptableAnimationScope PlayerAnimationWithAnimatorAndTransform(
+        IScriptableAnimation<(Animator, Transform)> animation,
+        bool @override = false
+    )
     {
-        if (@override == false && _animationController.IsAnimating) throw new Exception("In animating.");
+        if (@override == false && _animationController.IsAnimating)
+            throw new Exception("In animating.");
 
-        var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(animation, (this.animator, this.transform));
+        var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(
+            animation,
+            (this.animator, this.transform)
+        );
         var scope = _animationController.PlayAnimation(wrapper, @override);
         if (scope != null)
         {
-            scope.OnStart += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
-            scope.Completed += () => _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
+            scope.OnStart += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StartAnimation);
+            scope.Completed += () =>
+                _stateMachine.TryFire(CharacterStateMachine.Trigger.StopAnimation);
             scope.Start();
         }
 
         return scope;
     }
 
-    public bool TryFireTrigger(CharacterStateMachine.Trigger trigger) => _stateMachine.TryFire(trigger);
+    public bool TryFireTrigger(CharacterStateMachine.Trigger trigger) =>
+        _stateMachine.TryFire(trigger);
 
     private void OnDrawGizmos()
     {

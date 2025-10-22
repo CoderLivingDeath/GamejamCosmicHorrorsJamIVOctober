@@ -8,9 +8,9 @@ using UnityEngine;
 public class InteractionBehaviour : MonoBehaviour
 {
     public float Radius;
-    public InteractableBehaviour SelectedInteractable => Interactables.FirstOrDefault();
+    public MonoInteractable SelectedInteractable => Interactables.FirstOrDefault();
 
-    public IEnumerable<InteractableBehaviour> Interactables;
+    public IEnumerable<MonoInteractable> Interactables;
 
     public LayerMask Mask;
 
@@ -31,13 +31,13 @@ public class InteractionBehaviour : MonoBehaviour
         }
     }
 
-    public IEnumerable<InteractableBehaviour> FindInteractables(Vector3 origin, float radius, LayerMask mask)
+    public IEnumerable<MonoInteractable> FindInteractables(Vector3 origin, float radius, LayerMask mask)
     {
         Collider[] hits = Physics.OverlapSphere(origin, radius, mask);
-        HashSet<InteractableBehaviour> result = new HashSet<InteractableBehaviour>();
+        HashSet<MonoInteractable> result = new HashSet<MonoInteractable>();
         foreach (var hit in hits)
         {
-            var interactable = hit.GetComponent<InteractableBehaviour>();
+            var interactable = hit.GetComponent<MonoInteractable>();
             if (interactable != null)
             {
                 result.Add(interactable);
@@ -46,7 +46,7 @@ public class InteractionBehaviour : MonoBehaviour
         return result;
     }
 
-    public IEnumerable<InteractableBehaviour> GetInteractables()
+    public IEnumerable<MonoInteractable> GetInteractables()
     {
         return FindInteractables(transform.position, Radius, Mask)
             .OrderBy(item => Vector3.Distance(transform.position, item.transform.position));

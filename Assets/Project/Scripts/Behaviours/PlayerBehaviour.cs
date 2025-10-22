@@ -7,7 +7,7 @@ using Zenject;
 public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IGameplay_InteractEventHandler, IGameplay_SprintEventHandler
 {
     [SerializeField]
-    private MonoCharacterController CharacterController;
+    private MonoCharacterController monoCharacterController;
 
     [SerializeField]
     private GameObject CanInteractMarkObject;
@@ -15,15 +15,24 @@ public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IG
     [Inject]
     private EventBus _eventBus;
 
+    public MonoCharacterController MonoCharacterController => monoCharacterController;
+
     public void HandleMovement(Vector2 direction)
     {
-        CharacterController.MoveToDirection(direction);
+        monoCharacterController.MoveToDirection(direction);
     }
 
     public void HandleInteract(bool button)
     {
-        CharacterController.Interact();
+        monoCharacterController.Interact();
     }
+
+    public void DoDead()
+    {
+        GameObject.Destroy(this.gameObject);
+    }
+
+    #region Unity internal
 
     [Button]
     public void Snap()
@@ -31,21 +40,13 @@ public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IG
         this.SnapToSurface();
     }
 
-    #region Unity internal
-
     void Awake()
     {
-        CharacterController.InteractionController.SelectedInteractableChanged += (item) =>
-        {
-            if (item != null)
-            {
-                CanInteractMarkObject.SetActive(true);
-            }
-            else
-            {
-                CanInteractMarkObject.SetActive(false);
-            }
-        };
+        // CharacterController.InteractionController.SelectedInteractableChanged += (item) =>
+        // {
+        //     CanInteractMarkObject.SetActive(item != null);
+        // };
+
     }
 
     void OnEnable()
@@ -60,7 +61,7 @@ public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IG
 
     public void HandleSprint(bool button)
     {
-        CharacterController.Sprint(button);
+        monoCharacterController.Sprint(button);
     }
 
     #endregion

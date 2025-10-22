@@ -1,0 +1,22 @@
+{
+  "componentParameterSnapshots": {
+    "a5545a1a-b90a-4e70-8c10-8a9465b2de88": [
+      {
+        "gameObjectPath": "Cube (4)",
+        "componentTypeName": "UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "parameterName": "position",
+        "value": {
+          "x": 38.07631,
+          "y": 1.0,
+          "z": -1.49019
+        }
+      },
+      {
+        "gameObjectPath": "Cube (4)",
+        "componentTypeName": "MonoSaveable, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+        "parameterName": "enabled",
+        "value": true
+      }
+    ]
+  }
+}

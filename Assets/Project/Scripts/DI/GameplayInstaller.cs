@@ -1,6 +1,8 @@
 using System.Linq;
+using Unity.Cinemachine;
 using UnityEngine;
 using Zenject;
+using Zenject.SpaceFighter;
 
 [CreateAssetMenu(fileName = "GameplayInstaller", menuName = "Installers/GameplayInstaller")]
 public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
@@ -13,6 +15,16 @@ public class GameplayInstaller : ScriptableObjectInstaller<GameplayInstaller>
 
     public override void InstallBindings()
     {
+        Container.BindInterfacesAndSelfTo<JsonSaveService>().AsSingle();
+        Container.BindInterfacesAndSelfTo<PlayerSaveService>().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<SaveableService>().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<CinemachineCamera>().FromComponentInHierarchy().AsSingle();
+        Container.Bind<PlayerBehaviour>().FromComponentInHierarchy().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<GameController>().AsSingle().NonLazy();
+
         Container.Bind<LocationSettings>().FromInstance(locationSettings).AsSingle();
         Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
         BindLocationController();
