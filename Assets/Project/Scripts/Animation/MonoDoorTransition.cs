@@ -27,6 +27,7 @@ public class MonoDoorTransition : MonoBehaviour
         var transitAnimation = new DoorTransitionAnomationWithCharacter(duration, walkKey, nextKey, DoorOpen, DoorClose, pathAnimation, pathAnimationReverce: pathAnimationReverce);
 
         var scope = monoCharacterController.PlayerAnimationWithAnimatorAndTransform(transitAnimation);
+        if (scope == null) return null;
         scope.Completed += () =>
         {
             OnEnd.Invoke();

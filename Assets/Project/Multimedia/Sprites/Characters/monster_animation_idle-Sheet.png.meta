@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 6ef8296a94f8c2147b44703ff234733b
+guid: 540a9530fbbdb914588d2d699bd99eaa
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -71,7 +71,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: monster_animation-Sheet_0
+      name: monster_animation_idle-Sheet_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 128
-        height: 64
+        width: 64
+        height: 128
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,20 +112,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6abdea4af3804ea4cabb5708b6dbac2f
-      internalID: 353782934
+      spriteID: 20bac1aeb2934da4fb0a586cd67fd4d4
+      internalID: -1051791561
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: monster_animation-Sheet_1
+      name: monster_animation_idle-Sheet_1
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 64
+        height: 128
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7c96457f9d9a454d9c3500ff6ff6f18
+      internalID: -1675197928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: monster_animation_idle-Sheet_2
       rect:
         serializedVersion: 2
         x: 128
         y: 0
-        width: 128
-        height: 64
+        width: 64
+        height: 128
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +156,42 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 44b7f4b2c6426344abdd8e7c589984cb
-      internalID: -654660577
+      spriteID: 5e4fa3467636e184489c62c1c097fad3
+      internalID: 30047630
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: monster_animation-Sheet_2
+      name: monster_animation_idle-Sheet_3
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 64
+        height: 128
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a2fc714aee4f4a942961bf456f8a66e3
+      internalID: -196175488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: monster_animation_idle-Sheet_4
       rect:
         serializedVersion: 2
         x: 256
         y: 0
-        width: 128
-        height: 64
+        width: 64
+        height: 128
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,20 +200,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cb696848c75f05d4da8eacd6019eb42f
-      internalID: -1612985751
+      spriteID: 63c080d3aef9a9e4c8e147244035535d
+      internalID: -415096532
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: monster_animation-Sheet_3
+      name: monster_animation_idle-Sheet_5
       rect:
         serializedVersion: 2
-        x: 384
+        x: 320
         y: 0
-        width: 128
-        height: 64
+        width: 64
+        height: 128
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,52 +222,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95c490519f6ce7e4da425101e9d9ff6c
-      internalID: -1952272909
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: monster_animation-Sheet_4
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 128
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fd1c228c5d6207346a9e0e06dfb7ed64
-      internalID: 1452555317
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: monster_animation-Sheet_5
-      rect:
-        serializedVersion: 2
-        x: 640
-        y: 0
-        width: 128
-        height: 64
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4ade8ac3d527daa499c2d1c0a459cdb2
-      internalID: 759153718
+      spriteID: fe94304ee60c94247bf3791fa62ef17f
+      internalID: -391131476
       vertices: []
       indices: 
       edges: []
@@ -232,7 +232,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 22da36de47dc9974b881fbe3c4583311
+    spriteID: f9adc1ffd97d75644a642dae428890f2
     internalID: 0
     vertices: []
     indices: 
@@ -242,14 +242,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":1.0},"gridSpriteSize":{"x":128.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":128.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      monster_animation-Sheet_0: 353782934
-      monster_animation-Sheet_1: -654660577
-      monster_animation-Sheet_2: -1612985751
-      monster_animation-Sheet_3: -1952272909
-      monster_animation-Sheet_4: 1452555317
-      monster_animation-Sheet_5: 759153718
+      monster_animation_idle-Sheet_0: -1051791561
+      monster_animation_idle-Sheet_1: -1675197928
+      monster_animation_idle-Sheet_2: 30047630
+      monster_animation_idle-Sheet_3: -196175488
+      monster_animation_idle-Sheet_4: -415096532
+      monster_animation_idle-Sheet_5: -391131476
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
