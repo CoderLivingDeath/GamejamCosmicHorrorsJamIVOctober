@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
@@ -38,6 +39,17 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
         private GameObject Lamp;
 
         [SerializeField]
+        private GameObject AlertColection;
+        [SerializeField]
+        private GameObject EmergencyLightCollection;
+        [SerializeField]
+        private AudioSource _audioSource;
+        [SerializeField]
+        private AudioClip _audioAccessDenied;
+        [SerializeField]
+        private AudioClip _audioAccessGranted;
+
+        [SerializeField]
         private Material MaterialOpen;
 
         [Inject]
@@ -56,8 +68,21 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
                 if (PlayerPrefs.GetInt(ChackPlayerPrefsKey) != 1)
                 {
                     Debug.Log("Key not taked.");
+                    if (_audioSource.enabled)
+                    {
+                        _audioSource.clip = _audioAccessDenied;
+                        _audioSource.Play();
+                    }
                     return;
                 }
+
+                if (_audioSource.enabled)
+                {
+                    _audioSource.clip = _audioAccessGranted;
+                    _audioSource.Play();
+                    StartCoroutine(DisableAudioSourceAfterPlayback());
+                }
+
                 if (Lamp)
                 {
                     Lamp.GetComponent<SpriteRenderer>().material = MaterialOpen;
@@ -71,6 +96,23 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
                 if (Lamp)
                 {
                     ViewScope.View.ViewModel.PuzzleSolved += (s, e) => Lamp.GetComponent<SpriteRenderer>().material = MaterialOpen;
+                    if (AlertColection && AlertColection.activeSelf)
+                    {
+                        if (AlertColection.activeSelf)
+                        {
+                            ViewScope.View.ViewModel.PuzzleSolved += (s, e) => AlertColection.SetActive(false);
+                            ViewScope.View.ViewModel.PuzzleSolved += (s, e) => EmergencyLightCollection.SetActive(true);
+                        }
+                        if (_audioSource.enabled)
+                        {
+                            ViewScope.View.ViewModel.PuzzleSolved += (s, e) =>
+                            {
+                                _audioSource.clip = _audioAccessGranted;
+                                _audioSource.Play();
+                                StartCoroutine(DisableAudioSourceAfterPlayback());
+                            };
+                        }
+                    }
                 }
                 return;
             }
@@ -157,5 +199,10 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
             }
         }
 
+        IEnumerator DisableAudioSourceAfterPlayback()
+        {
+            yield return new WaitForSeconds(_audioAccessGranted.length);
+            _audioSource.enabled = false;
+        }
     }
 }

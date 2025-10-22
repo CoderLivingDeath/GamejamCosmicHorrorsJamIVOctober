@@ -121,7 +121,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _CChangeAmbCol: {r: 1, g: 0.1606436, b: 0, a: 1}
+    - _CChangeAmbCol: {r: 1, g: 0.16058058, b: 0, a: 1}
     - _Cos: {r: 1, g: 1, b: 1, a: 0}
     - _IntClampPos: {r: 83.3, g: 2, b: 10.16, a: 0}
     - _IntClampWidth: {r: 44.58, g: 5.2, b: 12.89, a: 0}

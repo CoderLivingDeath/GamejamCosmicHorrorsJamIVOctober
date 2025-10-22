@@ -112,6 +112,135 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.3237813, y: 3, z: 1.0447179}
   m_Center: {x: 0.64077914, y: 0, z: 0.4607015}
+--- !u!1 &142497175313221306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3032802084639750558}
+  - component: {fileID: 2499188811008412482}
+  m_Layer: 0
+  m_Name: Audio Source (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3032802084639750558
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142497175313221306}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071281, z: -0, w: 0.7070855}
+  m_LocalPosition: {x: 1.076, y: 1.247, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7040233828270143120}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &2499188811008412482
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142497175313221306}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &493751114918035068
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
   _priority: 0
-  BoundsSupport: 0
+  _boundsSupport: 0
   _interactionBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
@@ -280,6 +409,11 @@ MonoBehaviour:
   NextId: []
   PrevId: []
   Lamp: {fileID: 0}
+  AlertColection: {fileID: 0}
+  EmergencyLightCollection: {fileID: 0}
+  _audioSource: {fileID: 0}
+  _audioAccessDenied: {fileID: 0}
+  _audioAccessGranted: {fileID: 0}
   MaterialOpen: {fileID: 0}
 --- !u!65 &2731754129685048925
 BoxCollider:
@@ -620,7 +754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableBehaviour
   _priority: 0
-  BoundsSupport: 0
+  _boundsSupport: 0
   _interactionBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
@@ -651,6 +785,11 @@ MonoBehaviour:
   NextId: []
   PrevId: []
   Lamp: {fileID: 0}
+  AlertColection: {fileID: 0}
+  EmergencyLightCollection: {fileID: 0}
+  _audioSource: {fileID: 0}
+  _audioAccessDenied: {fileID: 0}
+  _audioAccessGranted: {fileID: 0}
   MaterialOpen: {fileID: 0}
 --- !u!65 &2304664789866376384
 BoxCollider:
@@ -1185,6 +1324,7 @@ Transform:
   - {fileID: 8121412159570662532}
   - {fileID: 8916021070722417079}
   - {fileID: 2547935906673027163}
+  - {fileID: 3032802084639750558}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90.003, z: 0}
 --- !u!95 &3640938564893388925

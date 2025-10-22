@@ -40,14 +40,28 @@ public class PlayerBehaviour : MonoCharacter, IGameplay_MovementEventHandler, IG
         this.SnapToSurface();
     }
 
-    void Awake()
+    void Start()
     {
-        // CharacterController.InteractionController.SelectedInteractableChanged += (item) =>
-        // {
-        //     CanInteractMarkObject.SetActive(item != null);
-        // };
+        MonoCharacterController.InteractionController.SelectedInteractableChanged += (item) =>
+        {
+            CanInteractMarkObject.SetActive(item != null);
+        };
 
     }
+    // void Awake()
+    // {
+    //     CharacterController.InteractionController.SelectedInteractableChanged += (item) =>
+    //     {
+    //         if (item != null)
+    //         {
+    //             CanInteractMarkObject.SetActive(true);
+    //         }
+    //         else
+    //         {
+    //             CanInteractMarkObject.SetActive(false);
+    //         }
+    //     };
+    // }
 
     void OnEnable()
     {
