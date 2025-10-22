@@ -120,6 +120,7 @@ namespace Project.Scripts.behaviours.Interaction.InteractableHandlers
             MonoCharacterController monoCharacterController = context.Interactor.GetComponent<MonoCharacterController>();
 
             var scope = doorTransitionAnimation.Animate(monoCharacterController, PathAnimationReverce);
+            if (scope == null) return;
             scope.Completed += () => locationController.HideLocations(PrevId);
 
             locationController.ActivateRangeLocation(NextId);

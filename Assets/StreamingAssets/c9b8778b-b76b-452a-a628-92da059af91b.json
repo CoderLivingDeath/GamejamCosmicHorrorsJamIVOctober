@@ -4,12 +4,8 @@
       {
         "gameObjectPath": "PLAYER",
         "componentTypeName": "MonoCharacterController, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-        "parameterName": "value",
-        "value": {
-          "x": 55.0,
-          "y": 55.0,
-          "z": 55.0
-        }
+        "parameterName": "Velocity",
+        "value": 0.1
       }
     ]
   }

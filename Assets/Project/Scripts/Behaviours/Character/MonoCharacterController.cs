@@ -90,7 +90,6 @@ public class MonoCharacterController : MonoBehaviour
             CharacterStateMachine.State.Idle,
             () =>
             {
-                animator.SetTrigger("Idle");
             },
             () => { }
         );
@@ -100,9 +99,14 @@ public class MonoCharacterController : MonoBehaviour
             () =>
             {
                 Velocity = 0.1f;
-                animator.SetTrigger("Walk");
+                animator.SetBool("IsMoving", true);
+                animator.SetBool("IsRuning", false);
             },
-            () => { }
+            () =>
+            {
+                animator.SetBool("IsMoving", false);
+                animator.SetBool("IsRuning", false);
+            }
         );
 
         _stateMachine.Subscribe(
@@ -110,11 +114,14 @@ public class MonoCharacterController : MonoBehaviour
             () =>
             {
                 Velocity = 0.2f;
-                animator.SetTrigger("Run");
+                animator.SetBool("IsMoving", true);
+                animator.SetBool("IsRuning", true);
             },
             () =>
             {
                 Velocity = 0.1f;
+                animator.SetBool("IsMoving", false);
+                animator.SetBool("IsRuning", false);
             }
         );
 
@@ -433,7 +440,8 @@ public class MonoCharacterController : MonoBehaviour
     )
     {
         if (@override == false && _animationController.IsAnimating)
-            throw new Exception("In animating.");
+            return null;
+        // throw new Exception("In animating.");
 
         var wrapper = new SciptableAnimationWrapper<(Animator, Transform)>(
             animation,
