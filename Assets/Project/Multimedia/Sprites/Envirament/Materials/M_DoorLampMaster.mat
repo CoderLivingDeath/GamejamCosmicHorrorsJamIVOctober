@@ -118,7 +118,7 @@ Material:
     m_Floats:
     - _AcphaClipThreshold: 0
     - _AddPrecomputedVelocity: 0
-    - _Alpha: 0.19999999
+    - _Alpha: 1
     - _AlphaClip: 1
     - _AlphaToMask: 0
     - _AmbientOcclusion: 0
@@ -139,7 +139,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _GlowIntensity: 0.19999999
+    - _GlowIntensity: 1
     - _Metallic: 0.602
     - _OcclusionStrength: 1
     - _Parallax: 0.005
