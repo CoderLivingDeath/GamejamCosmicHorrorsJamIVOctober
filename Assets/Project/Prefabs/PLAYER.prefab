@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3287274606406542176}
   - component: {fileID: 8847997846568232985}
+  - component: {fileID: 2783271265407625101}
   m_Layer: 3
   m_Name: Body
   m_TagString: Untagged
@@ -58,6 +59,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2783271265407625101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536200548393938157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c555c731cf5b50742a559f04f34d7212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomSoundPlayer
+  audioSource: {fileID: 0}
+  clips:
+  - {fileID: 8300000, guid: 3caa79e6f0b1d8a4da81a929eb40a1ca, type: 3}
+  - {fileID: 8300000, guid: 0031be16596163c4f9fa729b9d960386, type: 3}
+  - {fileID: 8300000, guid: 877fdcf2b27a8b94196c7e2b877187c3, type: 3}
+  - {fileID: 8300000, guid: b600f092542eaab438dcd5a248feb2d5, type: 3}
+  - {fileID: 8300000, guid: 5d7f1e7411b18bd4da867a32afbeeea0, type: 3}
+  - {fileID: 8300000, guid: 224ef9f1ec9542441a2c6fc22a0a249a, type: 3}
+  - {fileID: 8300000, guid: a4c8b926359bf904b9563495fffa4a24, type: 3}
+  - {fileID: 8300000, guid: 231021cae369c364fa7bc318ff8099af, type: 3}
 --- !u!1 &3417849386659229912
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,6 +401,7 @@ GameObject:
   - component: {fileID: 1975342624967200037}
   - component: {fileID: 7223589123827102579}
   - component: {fileID: 5646285173737807754}
+  - component: {fileID: 8491771195348789493}
   m_Layer: 3
   m_Name: PLAYER
   m_TagString: Player
@@ -471,6 +495,22 @@ MonoBehaviour:
   unityCharacterController: {fileID: 1975342624967200037}
   body: {fileID: 536200548393938157}
 --- !u!114 &5646285173737807754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7844810448443934840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c01b5b999c0414aa2daed59ef071b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonoSaveable
+  ID: c9b8778b-b76b-452a-a628-92da059af91b
+  ComponentParameters:
+  - TargetComponent: {fileID: 7223589123827102579}
+    ParameterName: Velocity
+--- !u!114 &8491771195348789493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

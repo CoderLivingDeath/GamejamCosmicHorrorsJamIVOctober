@@ -135,12 +135,14 @@ public class InteractionController : IDisposable
          LayerMask obstacleLayerMask = default)
     {
         Interactables = GetInteractables(position, additionalFilter, orderBySelector, obstacleLayerMask);
-
+        
         // Обновляем выбранный интерактивный объект (первый из списка или null)
         SelectedInteractable = Interactables.FirstOrDefault();
     }
     public void Interact()
     {
+        
+        Debug.Log(SelectedInteractable);
         if (SelectedInteractable != null)
         {
             SelectedInteractable.Interact(Transform.gameObject);

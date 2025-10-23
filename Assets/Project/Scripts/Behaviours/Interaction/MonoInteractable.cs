@@ -182,6 +182,7 @@ public class MonoInteractable : MonoBehaviour
 
         foreach (var interactable in interactables)
         {
+            Debug.Log(gameObject.name);
             interactable.HandleInteract(context);
         }
 

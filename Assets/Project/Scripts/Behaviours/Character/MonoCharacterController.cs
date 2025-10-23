@@ -366,6 +366,7 @@ public class MonoCharacterController : MonoBehaviour
 
     public void Interact()
     {
+        Debug.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         _interactionController.Interact();
     }
 

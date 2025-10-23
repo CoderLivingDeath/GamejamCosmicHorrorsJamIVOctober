@@ -2,11 +2,17 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using EditorAttributes;
 using Project.Scripts.behaviours.Interaction.InteractableHandlers;
+using UnityEngine.UIElements;
 
 public class MonoMonsterAI : MonoCharacter
 {
+    private InteractionController _interactionController;
+    public InteractionController InteractionController => _interactionController;
+    
+    
     private const float RANDOM_MOVE_X_MIN = -10f;
     private const float RANDOM_MOVE_X_MAX = 10f;
     private const float STOP_DISTANCE = 1f;
@@ -125,8 +131,14 @@ public class MonoMonsterAI : MonoCharacter
         }
     }
 
+    [SerializeField]
+    private LayerMask FindingMask;
     void Awake()
     {
+        _interactionController = new InteractionController(transform);
+        _interactionController.Radius = 1f;
+        _interactionController.Mask = FindingMask;
+        
         AIVision.TargetEntered += TargetSpoted;
         AIVision.TargetExited += TargetLost;
         ConfigureStates();
@@ -281,9 +293,45 @@ public class MonoMonsterAI : MonoCharacter
     {
         //Debug.Log("Updating Idle state");
     }
+    [SerializeField]
+    private Vector3 _pointToMove = Vector3.zero;
 
     private void UpdateChase()
     {
+        if (Target)
+        {
+            if (Target.gameObject.GetComponent<CharacterController>().enabled == false)
+            {
+                TargetLost(Target);
+                if (_pointToMove.x != 0f)
+                {
+                    MoveToPointCoroutine.RunAsync().ContinueWith(() =>
+                    {
+                        Interact();
+                        
+                    }).ContinueWith(() =>
+                    {
+                        _pointToMove = new Vector3(transform.position.x - 50f, transform.position.y, transform.position.z);
+                        MoveToPointCoroutine.RunAsync().ContinueWith(() =>
+                        {
+                            _pointToMove = Vector3.zero;
+                            Destroy(gameObject);
+                        });
+                    });
+                }
+                
+                return;
+            }
+        }
+
+        if (Target)
+        {
+            if (Mathf.Abs(Target.position.z - transform.position.z) > 1)
+            {
+                Interact();
+            }
+        }
+           
         if (predictedPlayerPositions.Count == 0)
         {
             var direction = Target.position - transform.position;
@@ -303,10 +351,24 @@ public class MonoMonsterAI : MonoCharacter
             StopMovement();
         }
 
-        if (Player.position.z > this.transform.position.z)
-        {
-                monoCharacterController.InteractionController.Interact();
-        }
+        // if (Player.position.z > this.transform.position.z)
+        // {
+        //         monoCharacterController.InteractionController.Interact();
+        // }
+        // if (Mathf.Abs(Target.position.z - transform.position.z) > 1)
+        // {
+        //     Interact();
+        // }
+    }
+
+    private void Interact()
+    {
+        _interactionController?.Enable();
+        _interactionController.UpdateInteractables(
+            transform.position + new Vector3(1f, 1f, 1f)
+        );
+        _pointToMove = _interactionController.Interactables.FirstOrDefault().transform.position;
+        _interactionController.Interact();
     }
 
     private void UpdateAgressive()
@@ -461,7 +523,7 @@ public class MonoMonsterAI : MonoCharacter
 
     public async UniTask MoveToPoint(CancellationToken token = default)
     {
-        Vector3 point = transform.position + new Vector3(UnityEngine.Random.Range(RANDOM_MOVE_X_MIN, RANDOM_MOVE_X_MAX), 0, 0);
+        Vector3 point = _pointToMove;
 
         while (!token.IsCancellationRequested)
         {
@@ -469,7 +531,7 @@ public class MonoMonsterAI : MonoCharacter
                 break;
 
             Vector3 direction = (point - transform.position).normalized;
-            monoCharacterController.MoveToDirection(new Vector2(direction.x, direction.z));
+            monoCharacterController.MoveToDirection(new Vector2(point.x, transform.position.z));
             await UniTask.Yield(PlayerLoopTiming.Update, token);
         }
 
@@ -538,7 +600,7 @@ public class MonoMonsterAI : MonoCharacter
             {
                 queue.Dequeue();
 
-                monoCharacterController.MoveToDirection(Vector2.zero);
+                // monoCharacterController.MoveToDirection(Vector2.zero);
 
                 if (queue.Count == 0)
                 {
